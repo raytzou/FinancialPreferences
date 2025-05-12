@@ -1,3 +1,6 @@
+using Repository;
+using Repository.Interface;
+
 namespace FinancialPreferences
 {
     public class Program
@@ -8,6 +11,7 @@ namespace FinancialPreferences
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IProduct, Product>();
 
             var app = builder.Build();
 
