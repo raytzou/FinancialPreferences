@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "金融商品喜好清單";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">金融商品喜好清單</h2>
+
+    <div class="d-flex justify-content-between mb-3">
+        <button class="btn btn-primary" onclick="onAdd()">新增商品</button>
+        <button class="btn btn-success" onclick="onSearch()">查詢</button>
+    </div>
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>產品名稱</th>
+                <th>產品價格</th>
+                <th>手續費率 (%)</th>
+                <th>購買數量</th>
+                <th>預計總金額</th>
+                <th>總手續費</th>
+                <th>扣款帳號</th>
+                <th>聯絡 Email</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ETF-0050</td>
+                <td>120.00</td>
+                <td>0.1</td>
+                <td>10</td>
+                <td>1200.00</td>
+                <td>1.20</td>
+                <td>1234567890</td>
+                <td>user1@example.com</td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-1" onclick="onEdit(1)">編輯</button>
+                    <button class="btn btn-danger btn-sm" onclick="onDelete(1)">刪除</button>
+                </td>
+            </tr>
+            <tr>
+                <td>股票-台積電</td>
+                <td>600.00</td>
+                <td>0.2</td>
+                <td>5</td>
+                <td>3000.00</td>
+                <td>6.00</td>
+                <td>0987654321</td>
+                <td>user2@example.com</td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-1" onclick="onEdit(2)">編輯</button>
+                    <button class="btn btn-danger btn-sm" onclick="onDelete(2)">刪除</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function onAdd() {
+        alert('add');
+    }
+
+    function onSearch() {
+        alert('search');
+    }
+
+    function onEdit(id) {
+        alert('edit');
+    }
+
+    function onDelete(id) {
+        if (confirm('delete ID: ' + id + ' ?')) {
+            alert('deleted ID: ' + id);
+        }
+    }
+</script>
