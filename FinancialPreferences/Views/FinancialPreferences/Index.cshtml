@@ -72,9 +72,10 @@
                             <label for="productId" class="form-label">@Html.DisplayNameFor(model => model.ProductName)</label>
                             <select class="form-select" id="productId" name="ProductId" required>
                                 <option value="">請選擇產品</option>
-                                <option value="guid1">ETF 0050</option>
-                                <option value="guid2">台積電股票</option>
-                                <option value="guid3">金融債券A</option>
+                                @foreach (var product in Model.Products)
+                                {
+                                    <option value="@product.ProductId">@product.ProductName</option>
+                                }
                             </select>
                         </div>
 

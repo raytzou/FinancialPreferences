@@ -12,7 +12,7 @@ namespace FinancialPreferences.Models
         public decimal FeeRate { get; set; }
         [Display(Name = "購買數量")]
         public int OrderQuantity { get; set; }
-        [Display(Name = "預計總金額")]   
+        [Display(Name = "預計總金額")]
         public decimal EstimatedTotalAmount { get; set; }
         [Display(Name = "總手續費")]
         public decimal TotalFee { get; set; }
@@ -21,6 +21,6 @@ namespace FinancialPreferences.Models
         [Display(Name = "聯絡 Email")]
         public string Email { get; set; }
         public List<FinancialPreferenceViewModel> Preferences { get; set; }
-
+        public List<Common.Product> Products { get; set; }
     }
 }
