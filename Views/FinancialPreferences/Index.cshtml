@@ -1,4 +1,5 @@
-﻿@{
+﻿@model FinancialPreferenceViewModel
+@{
     ViewData["Title"] = "金融商品喜好清單";
 }
 
@@ -13,15 +14,15 @@
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
-                <th>產品名稱</th>
-                <th>產品價格</th>
-                <th>手續費率 (%)</th>
-                <th>購買數量</th>
-                <th>預計總金額</th>
-                <th>總手續費</th>
-                <th>扣款帳號</th>
-                <th>聯絡 Email</th>
-                <th>操作</th>
+                <th>@Html.DisplayNameFor(model => model.ProductName)</th>
+                <th>@Html.DisplayNameFor(model => model.ProductPrice)</th>
+                <th>@Html.DisplayNameFor(model => model.FeeRate)</th>
+                <th>@Html.DisplayNameFor(model => model.OrderQuantity)</th>
+                <th>@Html.DisplayNameFor(model => model.EstimatedTotalAmount)</th>
+                <th>@Html.DisplayNameFor(model => model.TotalFee)</th>
+                <th>@Html.DisplayNameFor(model => model.AccountNumber)</th>
+                <th>@Html.DisplayNameFor(model => model.Email)</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -68,7 +69,7 @@
 
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="productId" class="form-label">產品名稱</label>
+                            <label for="productId" class="form-label">@Html.DisplayNameFor(model => model.ProductName)</label>
                             <select class="form-select" id="productId" name="ProductId" required>
                                 <option value="">請選擇產品</option>
                                 <option value="guid1">ETF 0050</option>
@@ -78,17 +79,17 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="orderQuantity" class="form-label">購買數量</label>
+                            <label for="orderQuantity" class="form-label">@Html.DisplayNameFor(model => model.OrderQuantity)</label>
                             <input type="number" class="form-control" id="orderQuantity" name="OrderQuantity" min="1" required />
                         </div>
 
                         <div class="mb-3">
-                            <label for="accountNumber" class="form-label">扣款帳號</label>
+                            <label for="accountNumber" class="form-label">@Html.DisplayNameFor(model => model.AccountNumber)</label>
                             <input type="text" class="form-control" id="accountNumber" name="AccountNumber" required />
                         </div>
 
                         <div class="mb-3">
-                            <label for="email" class="form-label">聯絡 Email</label>
+                            <label for="email" class="form-label">@Html.DisplayNameFor(model => model.Email)</label>
                             <input type="email" class="form-control" id="email" name="Email" required />
                         </div>
                     </div>
