@@ -12,7 +12,7 @@ namespace Repository
             var users = new List<Common.User>();
 
             using (var connection = new SqlConnection(connectionString))
-            using (var command = new SqlCommand("sp_GetAllProducts", connection))
+            using (var command = new SqlCommand("sp_GetAllUsers", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
                 connection.Open();
