@@ -101,7 +101,28 @@
 
                         <div class="mb-3">
                             <label for="accountNumber" class="form-label">@Html.DisplayNameFor(model => model.AccountNumber)</label>
-                            <input type="text" class="form-control" id="accountNumber" name="AccountNumber" required />
+                            <select class="form-select" id="accountSelect" name="AccountNumber" required onchange="onAccountChange()">
+                                <option value="">請選擇帳號</option>
+                                @foreach (var user in Model.Users)
+                                {
+                                    <option value="@user.AccountNumber"
+                                            data-name="@user.UserName"
+                                            data-email="@user.Email">
+                                        @user.AccountNumber
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div id="userInfo" style="display:none;">
+                            <div class="mb-3">
+                                <label for="userName" class="form-label">使用者姓名</label>
+                                <input type="text" class="form-control" id="userName" disabled />
+                            </div>
+                            <div class="mb-3">
+                                <label for="userEmail" class="form-label">聯絡 Email</label>
+                                <input type="email" class="form-control" id="userEmail" disabled />
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -153,6 +174,23 @@
             document.getElementById('productPrice').value = price;
             document.getElementById('feeRate').value = fee;
             document.getElementById('productInfo').style.display = 'block';
+        }
+    }
+
+    function onAccountChange() {
+        const select = document.getElementById('accountSelect');
+        const selectedOption = select.options[select.selectedIndex];
+        const name = selectedOption.getAttribute('data-name');
+        const email = selectedOption.getAttribute('data-email');
+
+        if (!select.value) {
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('userName').value = '';
+            document.getElementById('userEmail').value = '';
+        } else {
+            document.getElementById('userName').value = name;
+            document.getElementById('userEmail').value = email;
+            document.getElementById('userInfo').style.display = 'block';
         }
     }
 

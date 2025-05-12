@@ -22,5 +22,6 @@ namespace FinancialPreferences.Models
         public string Email { get; set; }
         public List<FinancialPreferenceViewModel> Preferences { get; set; }
         public List<Common.Product> Products { get; set; }
+        public List<Common.User> Users { get; set; }
     }
 }

@@ -7,10 +7,14 @@ namespace FinancialPreferences.Controllers
     public class FinancialPreferences : Controller
     {
         private readonly IProduct _productRepository;
+        private readonly IUser _userRepository;
 
-        public FinancialPreferences(IProduct productRepository)
+        public FinancialPreferences(
+            IProduct productRepository,
+            IUser userRepository)
         {
             _productRepository = productRepository;
+            _userRepository = userRepository;
         }
 
         public IActionResult Index()
@@ -18,6 +22,7 @@ namespace FinancialPreferences.Controllers
             return View(new FinancialPreferenceViewModel
             {
                 Products = _productRepository.GetProducts().ToList(),
+                Users = _userRepository.GetUsers().ToList(),
             });
         }
     }
