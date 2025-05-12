@@ -6,7 +6,7 @@
     <h2 class="mb-4">金融商品喜好清單</h2>
 
     <div class="d-flex justify-content-between mb-3">
-        <button class="btn btn-primary" onclick="onAdd()">新增商品</button>
+        <button class="btn btn-primary" onclick="openModal()">新增商品</button>
         <button class="btn btn-success" onclick="onSearch()">查詢</button>
     </div>
 
@@ -55,6 +55,52 @@
             </tr>
         </tbody>
     </table>
+
+    <div class="modal fade" id="addPreferenceModal" tabindex="-1" aria-labelledby="addPreferenceModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <form method="post" asp-page-handler="AddPreference">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addPreferenceModalLabel">新增金融商品喜好</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="productId" class="form-label">產品名稱</label>
+                            <select class="form-select" id="productId" name="ProductId" required>
+                                <option value="">請選擇產品</option>
+                                <option value="guid1">ETF 0050</option>
+                                <option value="guid2">台積電股票</option>
+                                <option value="guid3">金融債券A</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="orderQuantity" class="form-label">購買數量</label>
+                            <input type="number" class="form-control" id="orderQuantity" name="OrderQuantity" min="1" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="accountNumber" class="form-label">扣款帳號</label>
+                            <input type="text" class="form-control" id="accountNumber" name="AccountNumber" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">聯絡 Email</label>
+                            <input type="email" class="form-control" id="email" name="Email" required />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary">新增</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -74,5 +120,10 @@
         if (confirm('delete ID: ' + id + ' ?')) {
             alert('deleted ID: ' + id);
         }
+    }
+
+    function openModal() {
+        const modal = new bootstrap.Modal(document.getElementById('addPreferenceModal'));
+        modal.show();
     }
 </script>
