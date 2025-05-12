@@ -70,13 +70,28 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="productId" class="form-label">@Html.DisplayNameFor(model => model.ProductName)</label>
-                            <select class="form-select" id="productId" name="ProductId" required>
+                            <select class="form-select" id="productId" name="ProductId" required onchange="onProductChange()">
                                 <option value="">請選擇產品</option>
                                 @foreach (var product in Model.Products)
                                 {
-                                    <option value="@product.ProductId">@product.ProductName</option>
+                                    <option value="@product.ProductId"
+                                            data-price="@product.Price"
+                                            data-fee="@product.FeeRate">
+                                        @product.ProductName
+                                    </option>
                                 }
                             </select>
+                        </div>
+
+                        <div id="productInfo" style="display:none;">
+                            <div class="mb-3">
+                                <label for="productPrice" class="form-label">@Html.DisplayNameFor(model => model.ProductPrice)</label>
+                                <input type="text" class="form-control" id="productPrice" disabled />
+                            </div>
+                            <div class="mb-3">
+                                <label for="feeRate" class="form-label">@Html.DisplayNameFor(model => model.FeeRate)</label>
+                                <input type="text" class="form-control" id="feeRate" disabled />
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -121,6 +136,23 @@
     function onDelete(id) {
         if (confirm('delete ID: ' + id + ' ?')) {
             alert('deleted ID: ' + id);
+        }
+    }
+
+    function onProductChange() {
+        const select = document.getElementById('productId');
+        const selectedOption = select.options[select.selectedIndex];
+        const price = selectedOption.getAttribute('data-price');
+        const fee = selectedOption.getAttribute('data-fee');
+
+        if (!select.value) {
+            document.getElementById('productInfo').style.display = 'none';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('feeRate').value = '';
+        } else {
+            document.getElementById('productPrice').value = price;
+            document.getElementById('feeRate').value = fee;
+            document.getElementById('productInfo').style.display = 'block';
         }
     }
 
