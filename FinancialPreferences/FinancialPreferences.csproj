@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Service\BussinessLogic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Responses\" />
+  </ItemGroup>
+
 </Project>
