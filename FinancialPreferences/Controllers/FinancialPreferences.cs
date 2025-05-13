@@ -116,6 +116,7 @@ namespace FinancialPreferences.Controllers
                      join user in users on preference.UserId equals user.UserId
                      select new PreferenceTableRowViewModel
                      {
+                         PreferenceId = preference.PreferenceId,
                          ProductName = product.ProductName,
                          ProductPrice = product.Price,
                          FeeRate = product.FeeRate,

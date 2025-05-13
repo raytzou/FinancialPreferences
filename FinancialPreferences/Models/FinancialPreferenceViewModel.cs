@@ -13,6 +13,7 @@ namespace FinancialPreferences.Models
 
     public class PreferenceTableRowViewModel
     {
+        public Guid PreferenceId { get; set; }
         [Display(Name = "產品名稱")]
         public Guid ProductId { get; set; }
         [Display(Name = "扣款帳號")]
