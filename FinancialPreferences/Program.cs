@@ -1,5 +1,5 @@
 using Repository;
-using Repository.Interface;
+using Repository.Interfaces;
 
 namespace FinancialPreferences
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using Repository.Interface;
+using Repository.Interfaces;
 using System.Data;
 
 namespace Repository

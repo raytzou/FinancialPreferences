@@ -1,12 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Common.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace FinancialPreferences.Models
 {
     public class FinancialPreferenceViewModel
     {
         public List<PreferenceTableRowViewModel> Preferences { get; set; }
-        public List<Common.Product> Products { get; set; }
-        public List<Common.User> Users { get; set; }
+        public List<Product> Products { get; set; }
+        public List<User> Users { get; set; }
     }
 
     public class PreferenceTableRowViewModel

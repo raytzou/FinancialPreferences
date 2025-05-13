@@ -1,6 +1,6 @@
 ﻿using FinancialPreferences.Models;
 using Microsoft.AspNetCore.Mvc;
-using Repository.Interface;
+using Repository.Interfaces;
 
 namespace FinancialPreferences.Controllers
 {
