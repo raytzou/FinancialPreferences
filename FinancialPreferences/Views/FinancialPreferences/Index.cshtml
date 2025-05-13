@@ -42,7 +42,7 @@
                         <td>@preference.AccountNumber</td>
                         <td>@preference.Email</td>
                         <td>
-                            <button class="btn btn-warning btn-sm me-1" onclick="onEdit()">編輯</button>
+                            <button class="btn btn-warning btn-sm me-1">編輯</button>
                             <button class="btn btn-danger btn-sm" onclick="onDelete('@preference.PreferenceId')">刪除</button>
                         </td>
                     </tr>
@@ -139,10 +139,6 @@
 </div>
 
 <script>
-    function onEdit(id) {
-        alert('edit');
-    }
-
     function onDelete(id) {
         if (!confirm('確定要刪除 ID: ' + id + ' 嗎？')) return;
 
