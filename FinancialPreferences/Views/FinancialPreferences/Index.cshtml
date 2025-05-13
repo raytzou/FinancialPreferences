@@ -55,12 +55,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
 
-                <form method="post" asp-page-handler="AddPreference">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addPreferenceModalLabel">新增金融商品喜好</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
-                    </div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPreferenceModalLabel">新增金融商品喜好</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+                </div>
 
+                <form method="post" asp-action="Add">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="productId" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].ProductName)</label>
@@ -136,6 +136,7 @@
                         <button type="submit" class="btn btn-primary" onclick="onAdd()">新增</button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
