@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Repository.Interface;
 using System.Data;
 
@@ -6,12 +7,18 @@ namespace Repository
 {
     public class Product : IProduct
     {
+        private readonly string _connectionString;
+
+        public Product(IConfiguration cfg)
+        {
+            _connectionString = cfg.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Cannot find the conneciton string");
+        }
+
         public IEnumerable<Common.Product> GetProducts()
         {
-            var connectionString = "Server=localhost;Database=Financial;TrustServerCertificate=True;User Id=demo;Password=your_password;";
             var products = new List<Common.Product>();
 
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             using (var command = new SqlCommand("sp_GetAllProducts", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Repository.Interface;
 using System.Data;
 
@@ -6,12 +7,18 @@ namespace Repository
 {
     public class UserPreference : IUserPreference
     {
+        private readonly string _connectionString;
+
+        public UserPreference(IConfiguration cfg)
+        {
+            _connectionString = cfg.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("conneciton string 404 not found");
+        }
+
         public IEnumerable<Common.UserPreference> GetUserPreferences()
         {
-            var connectionString = "Server=localhos;Database=Financial;TrustServerCertificate=True;User Id=demo;Password=your_password;";
             var preferences = new List<Common.UserPreference>();
 
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             using (var command = new SqlCommand("sp_GetAllUserPreferences", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;

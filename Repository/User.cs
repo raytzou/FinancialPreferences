@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Repository.Interface;
 using System.Data;
 
@@ -6,12 +7,18 @@ namespace Repository
 {
     public class User : IUser
     {
+        private readonly string _connectionString;
+
+        public User(IConfiguration cfg)
+        {
+            _connectionString = cfg.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string not found");
+        }
+
         public IEnumerable<Common.User> GetUsers()
         {
-            var connectionString = "Server=localhost;Database=Financial;TrustServerCertificate=True;User Id=demo;Password=your_password;";
             var users = new List<Common.User>();
 
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             using (var command = new SqlCommand("sp_GetAllUsers", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
