@@ -5,7 +5,7 @@ namespace BussinessLogic.Services
 {
     public class FinancialPreferencesService : IFinancialPreferencesService
     {
-        public void Validate(UserPreference userPreference)
+        public List<string> Validate(UserPreference userPreference)
         {
             throw new NotImplementedException();
         }

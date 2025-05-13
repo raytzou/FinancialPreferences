@@ -2,6 +2,11 @@
 {
     public interface IFinancialPreferencesService
     {
-        void Validate(Common.Models.UserPreference userPreference);
+        /// <summary>
+        /// Validates the user preference.
+        /// </summary>
+        /// <param name="userPreference"></param>
+        /// <returns>Error messages.</returns>
+        List<string> Validate(Common.Models.UserPreference userPreference);
     }
 }
