@@ -13,6 +13,7 @@ namespace FinancialPreferences
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IProduct, Product>();
             builder.Services.AddScoped<IUser, User>();
+            builder.Services.AddScoped<IUserPreference, UserPreference>();
 
             var app = builder.Build();
 
