@@ -144,9 +144,28 @@
     }
 
     function onDelete(id) {
-        if (confirm('delete ID: ' + id + ' ?')) {
-            alert('deleted ID: ' + id);
-        }
+        if (!confirm('確定要刪除 ID: ' + id + ' 嗎？')) return;
+
+        fetch('/FinancialPreferences/Delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': _getAntiForgeryToken()
+            },
+            body: JSON.stringify({ PreferenceId: id })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('已成功刪除');
+                location.reload();
+            } else {
+                alert('刪除失敗');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('發生錯誤，請稍後再試');
+        });
     }
 
     function onProductChange() {
@@ -194,5 +213,9 @@
     function openModal() {
         const modal = new bootstrap.Modal(document.getElementById('addPreferenceModal'));
         modal.show();
+    }
+
+    function _getAntiForgeryToken() {
+        return document.querySelector('input[name="__RequestVerificationToken"]').value;
     }
 </script>
