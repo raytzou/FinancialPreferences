@@ -64,7 +64,7 @@ namespace Repository
                             ProductId = reader.GetGuid(productIdx),
                             OrderQuantity = reader.GetInt32(quantityIdx),
                             AccountNumber = reader.GetString(accountIdx),
-                            TotalAmount = reader.GetInt32(amountIdx),
+                            TotalAmount = reader.GetDecimal(amountIdx),
                             TotalFee = reader.GetDecimal(feeIdx)
                         };
                         preferences.Add(preference);
