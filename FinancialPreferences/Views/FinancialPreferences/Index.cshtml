@@ -53,7 +53,7 @@
 
     <div asp-validation-summary="All" class="text-danger"></div>
 
-    <div class="modal fade" id="addPreferenceModal" tabindex="-1" aria-labelledby="addPreferenceModalLabel" aria-hidden="true">
+    <div class="modal fade" id="EditingPreferenceModel" tabindex="-1" aria-labelledby="addPreferenceModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -207,7 +207,7 @@
     }
 
     function openModal() {
-        const modal = new bootstrap.Modal(document.getElementById('addPreferenceModal'));
+        const modal = new bootstrap.Modal(document.getElementById('EditingPreferenceModel'));
         modal.show();
     }
 
