@@ -11,6 +11,9 @@ namespace FinancialPreferences.Models
 
     public class PreferenceTableRowViewModel
     {
+        public Guid ProductId { get; set; }
+        public Guid UserId { get; set; }
+
         [Display(Name = "產品名稱")]
         public string ProductName { get; set; }
         [Display(Name = "產品價格")]
