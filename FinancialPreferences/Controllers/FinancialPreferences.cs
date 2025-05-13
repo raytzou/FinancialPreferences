@@ -51,6 +51,54 @@ namespace FinancialPreferences.Controllers
             });
         }
 
+        [HttpPost]
+        public IActionResult Add(FinancialPreferenceViewModel model)
+        {
+            var userPreference = MappingViewModelToDBModel(model.EditingPreference);
+            var validationErrors = _financialPreferencesService.Validate(userPreference);
+
+            IEnumerable<Product> products;
+            IEnumerable<User> users;
+            List<PreferenceTableRowViewModel> table;
+            Search(out products, out users, out table);
+
+            if (validationErrors.Count > 0)
+            {
+                foreach (var error in validationErrors)
+                {
+                    ModelState.AddModelError(string.Empty, error);
+                }
+
+                return View("Index", new FinancialPreferenceViewModel
+                {
+                    Products = products.ToList(),
+                    Users = users.ToList(),
+                    Preferences = table,
+                    EditingPreference = model.EditingPreference
+                });
+            }
+
+            _userPreferenceRepository.AddUserPreference(userPreference);
+            return RedirectToAction("Index", new FinancialPreferenceViewModel
+            {
+                Products = products.ToList(),
+                Users = users.ToList(),
+                Preferences = table,
+                EditingPreference = new PreferenceTableRowViewModel()
+            });
+
+            UserPreference MappingViewModelToDBModel(PreferenceTableRowViewModel model) => new UserPreference
+            {
+                PreferenceId = Guid.NewGuid(),
+                UserId = model.UserId,
+                ProductId = model.ProductId,
+                OrderQuantity = model.OrderQuantity,
+                AccountNumber = model.AccountNumber ?? _userRepository.GetUsers().FirstOrDefault(user => user.UserId == model.UserId)?.AccountNumber ?? throw new InvalidOperationException($"Cannot find the account number while insert data userid: {model.UserId}"),
+                TotalAmount = model.EstimatedTotalAmount,
+                TotalFee = model.TotalFee
+            };
+        }
+
         private void Search(out IEnumerable<Product> products, out IEnumerable<User> users, out List<PreferenceTableRowViewModel> table)
         {
             products = _productRepository.GetProducts();
