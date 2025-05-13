@@ -8,7 +8,9 @@
 
     <div class="d-flex justify-content-between mb-3">
         <button class="btn btn-primary" onclick="openModal()">新增商品</button>
-        <button class="btn btn-success" onclick="onSearch()">查詢</button>
+        <form asp-action="Search" method="post">
+            <button class="btn btn-success">查詢</button>
+        </form>
     </div>
 
     <table class="table table-striped table-bordered">
@@ -26,34 +28,26 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>ETF-0050</td>
-                <td>120.00</td>
-                <td>0.1</td>
-                <td>10</td>
-                <td>1200.00</td>
-                <td>1.20</td>
-                <td>1234567890</td>
-                <td>user1@example.com</td>
-                <td>
-                    <button class="btn btn-warning btn-sm me-1" onclick="onEdit(1)">編輯</button>
-                    <button class="btn btn-danger btn-sm" onclick="onDelete(1)">刪除</button>
-                </td>
-            </tr>
-            <tr>
-                <td>股票-台積電</td>
-                <td>600.00</td>
-                <td>0.2</td>
-                <td>5</td>
-                <td>3000.00</td>
-                <td>6.00</td>
-                <td>0987654321</td>
-                <td>user2@example.com</td>
-                <td>
-                    <button class="btn btn-warning btn-sm me-1" onclick="onEdit(2)">編輯</button>
-                    <button class="btn btn-danger btn-sm" onclick="onDelete(2)">刪除</button>
-                </td>
-            </tr>
+            @if (Model.Preferences != null)
+            {
+                foreach (var preference in Model.Preferences)
+                {
+                    <tr>
+                        <td>@preference.ProductName</td>
+                        <td>@preference.ProductPrice</td>
+                        <td>@preference.FeeRate</td>
+                        <td>@preference.OrderQuantity</td>
+                        <td>@preference.EstimatedTotalAmount</td>
+                        <td>@preference.TotalFee</td>
+                        <td>@preference.AccountNumber</td>
+                        <td>@preference.Email</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-1" onclick="onEdit()">編輯</button>
+                            <button class="btn btn-danger btn-sm" onclick="onDelete()">刪除</button>
+                        </td>
+                    </tr>
+                }
+            }
         </tbody>
     </table>
 
@@ -72,14 +66,17 @@
                             <label for="productId" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].ProductName)</label>
                             <select class="form-select" id="productId" name="ProductId" required onchange="onProductChange()">
                                 <option value="">請選擇產品</option>
-                                @foreach (var product in Model.Products)
+                                @if (Model.Preferences != null)
                                 {
-                                    <option value="@product.ProductId"
-                                            data-price="@product.Price"
-                                            data-fee="@product.FeeRate">
-                                        @product.ProductName
-                                    </option>
-                                }
+                                    @foreach (var product in Model.Products)
+                                    {
+                                        <option value="@product.ProductId"
+                                                data-price="@product.Price"
+                                                data-fee="@product.FeeRate">
+                                            @product.ProductName
+                                        </option>
+                                    }
+                                })
                             </select>
                         </div>
 
@@ -103,14 +100,17 @@
                             <label for="accountNumber" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].AccountNumber)</label>
                             <select class="form-select" id="accountSelect" name="AccountNumber" required onchange="onAccountChange()">
                                 <option value="">請選擇帳號</option>
-                                @foreach (var user in Model.Users)
+                                @if (Model.Users != null)
                                 {
-                                    <option value="@user.AccountNumber"
-                                            data-name="@user.UserName"
-                                            data-email="@user.Email">
-                                        @user.AccountNumber
-                                    </option>
-                                }
+                                    @foreach (var user in Model.Users)
+                                    {
+                                        <option value="@user.AccountNumber"
+                                                data-name="@user.UserName"
+                                                data-email="@user.Email">
+                                            @user.AccountNumber
+                                        </option>
+                                    }
+                                })
                             </select>
                         </div>
 
