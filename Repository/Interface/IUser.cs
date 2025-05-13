@@ -2,6 +2,6 @@
 {
     public interface IUser
     {
-        IEnumerable<Common.User> GetUsers();
+        IEnumerable<Common.Models.User> GetUsers();
     }
 }

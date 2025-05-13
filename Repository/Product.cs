@@ -14,9 +14,9 @@ namespace Repository
             _connectionString = cfg.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Cannot find the conneciton string");
         }
 
-        public IEnumerable<Common.Product> GetProducts()
+        public IEnumerable<Common.Models.Product> GetProducts()
         {
-            var products = new List<Common.Product>();
+            var products = new List<Common.Models.Product>();
 
             using (var connection = new SqlConnection(_connectionString))
             using (var command = new SqlCommand("sp_GetAllProducts", connection))
@@ -34,7 +34,7 @@ namespace Repository
 
                     while (reader.Read())
                     {
-                        var product = new Common.Product
+                        var product = new Common.Models.Product
                         {
                             ProductId = reader.GetGuid(idIdx),
                             ProductName = reader.GetString(nameIdx),

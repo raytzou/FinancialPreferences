@@ -2,6 +2,7 @@
 {
     public interface IUserPreference
     {
-        public IEnumerable<Common.UserPreference> GetUserPreferences();
+        public IEnumerable<Common.Models.UserPreference> GetUserPreferences();
+        public void AddUserPreference(Common.Models.UserPreference userPreference);
     }
 }

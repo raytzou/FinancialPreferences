@@ -14,9 +14,14 @@ namespace Repository
             _connectionString = cfg.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("conneciton string 404 not found");
         }
 
-        public IEnumerable<Common.UserPreference> GetUserPreferences()
+        public void AddUserPreference(Common.Models.UserPreference userPreference)
         {
-            var preferences = new List<Common.UserPreference>();
+            
+        }
+
+        public IEnumerable<Common.Models.UserPreference> GetUserPreferences()
+        {
+            var preferences = new List<Common.Models.UserPreference>();
 
             using (var connection = new SqlConnection(_connectionString))
             using (var command = new SqlCommand("sp_GetAllUserPreferences", connection))
@@ -37,7 +42,7 @@ namespace Repository
 
                     while (reader.Read())
                     {
-                        var preference = new Common.UserPreference
+                        var preference = new Common.Models.UserPreference
                         {
                             PreferenceId = reader.GetGuid(idIdx),
                             UserId = reader.GetGuid(userIdx),

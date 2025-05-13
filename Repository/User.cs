@@ -14,9 +14,9 @@ namespace Repository
             _connectionString = cfg.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string not found");
         }
 
-        public IEnumerable<Common.User> GetUsers()
+        public IEnumerable<Common.Models.User> GetUsers()
         {
-            var users = new List<Common.User>();
+            var users = new List<Common.Models.User>();
 
             using (var connection = new SqlConnection(_connectionString))
             using (var command = new SqlCommand("sp_GetAllUsers", connection))
@@ -34,7 +34,7 @@ namespace Repository
 
                     while (reader.Read())
                     {
-                        var user = new Common.User
+                        var user = new Common.Models.User
                         {
                             UserId = reader.GetGuid(idIdx),
                             UserName = reader.GetString(nameIdx),

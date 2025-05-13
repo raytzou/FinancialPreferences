@@ -2,6 +2,6 @@
 {
     public interface IProduct
     {
-        IEnumerable<Common.Product> GetProducts();
+        IEnumerable<Common.Models.Product> GetProducts();
     }
 }
