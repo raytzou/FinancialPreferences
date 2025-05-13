@@ -1,3 +1,5 @@
+using BussinessLogic.Services;
+using BussinessLogic.Services.Interfaces;
 using Repository;
 using Repository.Interfaces;
 
@@ -15,6 +17,7 @@ namespace FinancialPreferences
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserPreferenceRepository, UserPreferenceRepository>();
+            builder.Services.AddScoped<IFinancialPreferencesService, FinancialPreferencesService>();
 
             var app = builder.Build();
 
