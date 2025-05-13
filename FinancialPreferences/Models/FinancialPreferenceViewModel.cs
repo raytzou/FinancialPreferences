@@ -8,12 +8,14 @@ namespace FinancialPreferences.Models
         public List<PreferenceTableRowViewModel> Preferences { get; set; }
         public List<Product> Products { get; set; }
         public List<User> Users { get; set; }
-        public PreferenceTableRowViewModel NewPreference { get; set; } = new();
+        public PreferenceTableRowViewModel EditingPreference { get; set; } = new();
     }
 
     public class PreferenceTableRowViewModel
     {
+        [Display(Name = "產品名稱")]
         public Guid ProductId { get; set; }
+        [Display(Name = "扣款帳號")]
         public Guid UserId { get; set; }
 
         [Display(Name = "產品名稱")]
