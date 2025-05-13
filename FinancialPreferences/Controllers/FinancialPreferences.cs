@@ -1,6 +1,7 @@
 ﻿using BussinessLogic.Services.Interfaces;
 using Common.Models;
 using FinancialPreferences.Models;
+using FinancialPreferences.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interfaces;
 
@@ -100,9 +101,22 @@ namespace FinancialPreferences.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(FinancialPreferenceViewModel model)
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete([FromBody] DeleteRequest model)
         {
-            throw new NotImplementedException();
+            if (model.PreferenceId == Guid.Empty)
+                return BadRequest("PreferenceId empty");
+
+            try
+            {
+                _userPreferenceRepository.DeleteUserPreference(model.PreferenceId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return View("Index");
         }
 
         private void Search(out IEnumerable<Product> products, out IEnumerable<User> users, out List<PreferenceTableRowViewModel> table)
