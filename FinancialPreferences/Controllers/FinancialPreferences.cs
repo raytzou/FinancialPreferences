@@ -53,6 +53,34 @@ namespace FinancialPreferences.Controllers
         }
 
         [HttpPost]
+        public IActionResult GetById([FromBody] GetByIdRequest model)
+        {
+            var preferences = _userPreferenceRepository.GetUserPreferences();
+            var users = _userRepository.GetUsers();
+            var products = _productRepository.GetProducts();
+
+            var pref = preferences.FirstOrDefault(p => p.PreferenceId == model.PreferenceId);
+            if (pref == null) return NotFound();
+
+            var user = users.FirstOrDefault(u => u.UserId == pref.UserId);
+            var product = products.FirstOrDefault(p => p.ProductId == pref.ProductId);
+
+            return Json(new
+            {
+                preferenceId = pref.PreferenceId,
+                productId = pref.ProductId,
+                productName = product?.ProductName,
+                productPrice = product?.Price,
+                feeRate = product?.FeeRate,
+                userId = user?.UserId,
+                userName = user?.UserName,
+                accountNumber = pref.AccountNumber,
+                orderQuantity = pref.OrderQuantity,
+                email = user?.Email
+            });
+        }
+
+        [HttpPost]
         public IActionResult Add(FinancialPreferenceViewModel model)
         {
             var userPreference = MappingViewModelToDBModel(model.EditingPreference);
@@ -62,7 +90,7 @@ namespace FinancialPreferences.Controllers
             IEnumerable<User> users;
             List<PreferenceTableRowViewModel> table;
             Search(out products, out users, out table);
-
+            
             if (validationErrors.Count > 0)
             {
                 foreach (var error in validationErrors)
