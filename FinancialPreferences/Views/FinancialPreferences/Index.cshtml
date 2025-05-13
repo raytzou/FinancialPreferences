@@ -62,7 +62,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
                 </div>
 
-                <form method="post" asp-action="Add">
+                <form method="post" asp-action="Edit">
                     <div class="modal-body">
 
                         <div class="mb-3">
@@ -251,6 +251,7 @@
                 alert("無法載入資料");
             });
         } else {
+            document.getElementById("EditingPreference_PreferenceId").value = '';
             document.querySelector('[name="EditingPreference.ProductId"]').value = '';
             document.querySelector('[name="EditingPreference.UserId"]').value = '';
             document.querySelector('[name="EditingPreference.OrderQuantity"]').value = '';

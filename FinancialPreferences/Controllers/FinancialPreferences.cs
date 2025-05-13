@@ -81,7 +81,7 @@ namespace FinancialPreferences.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(FinancialPreferenceViewModel model)
+        public IActionResult Edit(FinancialPreferenceViewModel model)
         {
             var userPreference = MappingViewModelToDBModel(model.EditingPreference);
             var validationErrors = _financialPreferencesService.Validate(userPreference);
@@ -90,7 +90,7 @@ namespace FinancialPreferences.Controllers
             IEnumerable<User> users;
             List<PreferenceTableRowViewModel> table;
             Search(out products, out users, out table);
-            
+
             if (validationErrors.Count > 0)
             {
                 foreach (var error in validationErrors)
@@ -107,18 +107,26 @@ namespace FinancialPreferences.Controllers
                 });
             }
 
-            _userPreferenceRepository.AddUserPreference(userPreference);
+            if (model.EditingPreference.PreferenceId == Guid.Empty)
+            {
+                _userPreferenceRepository.AddUserPreference(userPreference);
+            }
+            else
+            {
+                _userPreferenceRepository.UpdateUserPreference(userPreference);
+            }
+
             return RedirectToIndexWithModel(products, users, table);
 
-            UserPreference MappingViewModelToDBModel(PreferenceTableRowViewModel model) => new UserPreference
+            UserPreference MappingViewModelToDBModel(PreferenceTableRowViewModel view) => new UserPreference
             {
-                PreferenceId = Guid.NewGuid(),
-                UserId = model.UserId,
-                ProductId = model.ProductId,
-                OrderQuantity = model.OrderQuantity,
-                AccountNumber = model.AccountNumber ?? _userRepository.GetUsers().FirstOrDefault(user => user.UserId == model.UserId)?.AccountNumber ?? throw new InvalidOperationException($"Cannot find the account number while insert data userid: {model.UserId}"),
-                TotalAmount = model.EstimatedTotalAmount,
-                TotalFee = model.TotalFee
+                PreferenceId = model.EditingPreference.PreferenceId == Guid.Empty ? Guid.NewGuid() : model.EditingPreference.PreferenceId,
+                UserId = view.UserId,
+                ProductId = view.ProductId,
+                OrderQuantity = view.OrderQuantity,
+                AccountNumber = view.AccountNumber ?? _userRepository.GetUsers().FirstOrDefault(user => user.UserId == view.UserId)?.AccountNumber ?? throw new InvalidOperationException($"Cannot find the account number while insert data userid: {view.UserId}"),
+                TotalAmount = view.EstimatedTotalAmount,
+                TotalFee = view.TotalFee
             };
         }
 
