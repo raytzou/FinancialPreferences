@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Common.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Repository.Interfaces;
 using System.Data;
@@ -14,10 +15,30 @@ namespace Repository
             _connectionString = cfg.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("conneciton string 404 not found");
         }
 
-        public void AddUserPreference(Common.Models.UserPreference userPreference)
+        public void AddUserPreference(UserPreference userPreference)
         {
             using (var connection = new SqlConnection(_connectionString))
             using (var command = new SqlCommand("sp_AddUserPreference", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@PreferenceId", userPreference.PreferenceId);
+                command.Parameters.AddWithValue("@UserId", userPreference.UserId);
+                command.Parameters.AddWithValue("@ProductId", userPreference.ProductId);
+                command.Parameters.AddWithValue("@OrderQuantity", userPreference.OrderQuantity);
+                command.Parameters.AddWithValue("@AccountNumber", userPreference.AccountNumber);
+                command.Parameters.AddWithValue("@TotalAmount", userPreference.TotalAmount);
+                command.Parameters.AddWithValue("@TotalFee", userPreference.TotalFee);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void UpdateUserPreference(UserPreference userPreference)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand("sp_UpdateUserPreference", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
 
