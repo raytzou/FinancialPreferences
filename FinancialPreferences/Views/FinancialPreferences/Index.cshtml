@@ -42,7 +42,7 @@
                         <td>@preference.AccountNumber</td>
                         <td>@preference.Email</td>
                         <td>
-                            <button class="btn btn-warning btn-sm me-1">編輯</button>
+                            <button class="btn btn-warning btn-sm me-1" onclick="openModal('@preference.PreferenceId')">編輯</button>
                             <button class="btn btn-danger btn-sm" onclick="onDelete('@preference.PreferenceId')">刪除</button>
                         </td>
                     </tr>
@@ -129,8 +129,9 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button class="btn btn-primary">新增</button>
+                        <button class="btn btn-primary">確定</button>
                     </div>
+                    <input asp-for="EditingPreference.PreferenceId" hidden />
                 </form>
 
             </div>
@@ -206,7 +207,68 @@
         }
     }
 
-    function openModal() {
+    function openModal(id) {
+        if (id !== undefined && id !== null && id !== '') {
+            fetch('/FinancialPreferences/GetById', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': _getAntiForgeryToken()
+                },
+                body: JSON.stringify({ preferenceId: id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data) {
+                    alert("找不到資料");
+                    return;
+                }
+
+                document.getElementById("EditingPreference_PreferenceId").value = data.preferenceId;
+                document.querySelector('[name="EditingPreference.ProductId"]').value = data.productId;
+                document.querySelector('[name="EditingPreference.UserId"]').value = data.userId;
+                document.querySelector('[name="EditingPreference.OrderQuantity"]').value = data.orderQuantity;
+
+                document.querySelector('[name="EditingPreference.ProductPrice"]').value = data.productPrice;
+                document.getElementById('diplyPrice').value = data.productPrice;
+
+                document.querySelector('[name="EditingPreference.FeeRate"]').value = data.feeRate;
+                document.getElementById('displayFeeRate').value = data.feeRate;
+
+                document.querySelector('[name="EditingPreference.UserName"]').value = data.userName;
+                document.getElementById('displayUserName').value = data.userName;
+
+                document.querySelector('[name="EditingPreference.Email"]').value = data.email;
+                document.getElementById('displayUserEmail').value = data.email;
+
+                document.getElementById('productInfo').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'block';
+
+                document.getElementById('addPreferenceModalLabel').innerText = '編輯金融商品喜好';
+            })
+            .catch(error => {
+                console.error('發生錯誤:', error);
+                alert("無法載入資料");
+            });
+        } else {
+            document.querySelector('[name="EditingPreference.ProductId"]').value = '';
+            document.querySelector('[name="EditingPreference.UserId"]').value = '';
+            document.querySelector('[name="EditingPreference.OrderQuantity"]').value = '';
+            document.querySelector('[name="EditingPreference.ProductPrice"]').value = '';
+            document.getElementById('diplyPrice').value = '';
+            document.querySelector('[name="EditingPreference.FeeRate"]').value = '';
+            document.getElementById('displayFeeRate').value = '';
+            document.querySelector('[name="EditingPreference.UserName"]').value = '';
+            document.getElementById('displayUserName').value = '';
+            document.querySelector('[name="EditingPreference.Email"]').value = '';
+            document.getElementById('displayUserEmail').value = '';
+
+            document.getElementById('productInfo').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'none';
+
+            document.getElementById('addPreferenceModalLabel').innerText = '新增金融商品喜好';
+        }
+
         const modal = new bootstrap.Modal(document.getElementById('EditingPreferenceModel'));
         modal.show();
     }
