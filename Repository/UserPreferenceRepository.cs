@@ -34,6 +34,20 @@ namespace Repository
             }
         }
 
+        public void DeleteUserPreference(Guid preferenceId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand("sp_DeleteUserPreference", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@PreferenceId", preferenceId);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+
         public IEnumerable<Common.Models.UserPreference> GetUserPreferences()
         {
             var preferences = new List<Common.Models.UserPreference>();
