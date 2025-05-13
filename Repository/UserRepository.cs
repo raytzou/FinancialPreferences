@@ -5,11 +5,11 @@ using System.Data;
 
 namespace Repository
 {
-    public class User : IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly string _connectionString;
 
-        public User(IConfiguration cfg)
+        public UserRepository(IConfiguration cfg)
         {
             _connectionString = cfg.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string not found");
         }

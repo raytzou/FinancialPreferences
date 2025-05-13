@@ -5,11 +5,11 @@ using System.Data;
 
 namespace Repository
 {
-    public class UserPreference : IUserPreferenceRepository
+    public class UserPreferenceRepository : IUserPreferenceRepository
     {
         private readonly string _connectionString;
 
-        public UserPreference(IConfiguration cfg)
+        public UserPreferenceRepository(IConfiguration cfg)
         {
             _connectionString = cfg.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("conneciton string 404 not found");
         }
