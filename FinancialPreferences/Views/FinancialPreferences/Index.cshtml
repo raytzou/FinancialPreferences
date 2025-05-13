@@ -124,16 +124,11 @@
                                 <input type="email" class="form-control" id="userEmail" disabled />
                             </div>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].Email)</label>
-                            <input type="email" class="form-control" id="email" name="Email" required />
-                        </div>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-primary" onclick="onAdd()">新增</button>
+                        <button class="btn btn-primary">新增</button>
                     </div>
                 </form>
 
@@ -143,10 +138,6 @@
 </div>
 
 <script>
-    function onAdd() {
-        alert('add');
-    }
-
     function onSearch() {
         alert('search');
     }
