@@ -16,7 +16,22 @@ namespace Repository
 
         public void AddUserPreference(Common.Models.UserPreference userPreference)
         {
-            
+            using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand("sp_AddUserPreference", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@PreferenceId", userPreference.PreferenceId);
+                command.Parameters.AddWithValue("@UserId", userPreference.UserId);
+                command.Parameters.AddWithValue("@ProductId", userPreference.ProductId);
+                command.Parameters.AddWithValue("@OrderQuantity", userPreference.OrderQuantity);
+                command.Parameters.AddWithValue("@AccountNumber", userPreference.AccountNumber);
+                command.Parameters.AddWithValue("@TotalAmount", userPreference.TotalAmount);
+                command.Parameters.AddWithValue("@TotalFee", userPreference.TotalFee);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
         }
 
         public IEnumerable<Common.Models.UserPreference> GetUserPreferences()
