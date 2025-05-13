@@ -7,7 +7,7 @@
         public Guid ProductId { get; set; }
         public int OrderQuantity { get; set; }
         public string AccountNumber { get; set; }
-        public int TotalAmount { get; set; }
+        public decimal TotalAmount { get; set; }
         public decimal TotalFee { get; set; }
     }
 }
