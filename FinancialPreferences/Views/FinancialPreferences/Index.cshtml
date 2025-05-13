@@ -116,11 +116,11 @@
 
                         <div id="userInfo" style="display:none;">
                             <div class="mb-3">
-                                <label for="userName" class="form-label">使用者姓名</label>
+                                <label for="userName" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].UserName)</label>
                                 <input type="text" class="form-control" id="userName" disabled />
                             </div>
                             <div class="mb-3">
-                                <label for="userEmail" class="form-label">聯絡 Email</label>
+                                <label for="userEmail" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].Email)</label>
                                 <input type="email" class="form-control" id="userEmail" disabled />
                             </div>
                         </div>

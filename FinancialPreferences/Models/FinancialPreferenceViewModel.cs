@@ -8,6 +8,7 @@ namespace FinancialPreferences.Models
         public List<PreferenceTableRowViewModel> Preferences { get; set; }
         public List<Product> Products { get; set; }
         public List<User> Users { get; set; }
+        public PreferenceTableRowViewModel NewPreference { get; set; } = new();
     }
 
     public class PreferenceTableRowViewModel
@@ -29,6 +30,8 @@ namespace FinancialPreferences.Models
         public decimal TotalFee { get; set; }
         [Display(Name = "扣款帳號")]
         public string AccountNumber { get; set; }
+        [Display(Name = "使用者姓名")]
+        public string UserName { get; set; }
         [Display(Name = "聯絡 Email")]
         public string Email { get; set; }
     }
