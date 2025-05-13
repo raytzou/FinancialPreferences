@@ -80,13 +80,7 @@ namespace FinancialPreferences.Controllers
             }
 
             _userPreferenceRepository.AddUserPreference(userPreference);
-            return RedirectToAction("Index", new FinancialPreferenceViewModel
-            {
-                Products = products.ToList(),
-                Users = users.ToList(),
-                Preferences = table,
-                EditingPreference = new PreferenceTableRowViewModel()
-            });
+            return RedirectToIndexWithModel(products, users, table);
 
             UserPreference MappingViewModelToDBModel(PreferenceTableRowViewModel model) => new UserPreference
             {
@@ -116,7 +110,12 @@ namespace FinancialPreferences.Controllers
                 return BadRequest(ex.Message);
             }
 
-            return View("Index");
+            IEnumerable<Product> products;
+            IEnumerable<User> users;
+            List<PreferenceTableRowViewModel> table;
+            Search(out products, out users, out table);
+
+            return RedirectToIndexWithModel(products, users, table);
         }
 
         private void Search(out IEnumerable<Product> products, out IEnumerable<User> users, out List<PreferenceTableRowViewModel> table)
@@ -140,6 +139,17 @@ namespace FinancialPreferences.Controllers
                          AccountNumber = preference.AccountNumber,
                          Email = user.Email
                      }).ToList();
+        }
+
+        private IActionResult RedirectToIndexWithModel(IEnumerable<Product> products, IEnumerable<User> users, List<PreferenceTableRowViewModel> table)
+        {
+            return RedirectToAction("Index", new FinancialPreferenceViewModel
+            {
+                Products = products.ToList(),
+                Users = users.ToList(),
+                Preferences = table,
+                EditingPreference = new PreferenceTableRowViewModel()
+            });
         }
     }
 }
