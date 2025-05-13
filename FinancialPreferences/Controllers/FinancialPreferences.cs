@@ -99,6 +99,12 @@ namespace FinancialPreferences.Controllers
             };
         }
 
+        [HttpPost]
+        public IActionResult Delete(FinancialPreferenceViewModel model)
+        {
+            throw new NotImplementedException();
+        }
+
         private void Search(out IEnumerable<Product> products, out IEnumerable<User> users, out List<PreferenceTableRowViewModel> table)
         {
             products = _productRepository.GetProducts();
