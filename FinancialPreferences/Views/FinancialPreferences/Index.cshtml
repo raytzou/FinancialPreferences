@@ -51,6 +51,8 @@
         </tbody>
     </table>
 
+    <div asp-validation-summary="All" class="text-danger"></div>
+
     <div class="modal fade" id="addPreferenceModal" tabindex="-1" aria-labelledby="addPreferenceModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -62,66 +64,65 @@
 
                 <form method="post" asp-action="Add">
                     <div class="modal-body">
+
                         <div class="mb-3">
-                            <label for="productId" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].ProductName)</label>
-                            <select class="form-select" id="productId" name="ProductId" required onchange="onProductChange()">
+                            <label asp-for="EditingPreference.ProductId" class="form-label"></label>
+                            <select asp-for="EditingPreference.ProductId" class="form-select" onchange="onProductChange()" required>
                                 <option value="">請選擇產品</option>
-                                @if (Model.Products != null)
+                                @foreach (var product in Model.Products)
                                 {
-                                    @foreach (var product in Model.Products)
-                                    {
-                                        <option value="@product.ProductId"
-                                                data-price="@product.Price"
-                                                data-fee="@product.FeeRate">
-                                            @product.ProductName
-                                        </option>
-                                    }
-                                })
+                                    <option value="@product.ProductId"
+                                            data-price="@product.Price"
+                                            data-fee="@product.FeeRate">
+                                        @product.ProductName
+                                    </option>
+                                }
                             </select>
                         </div>
 
                         <div id="productInfo" style="display:none;">
                             <div class="mb-3">
-                                <label for="productPrice" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].ProductPrice)</label>
-                                <input type="text" class="form-control" id="productPrice" disabled />
+                                <label asp-for="EditingPreference.ProductPrice" class="form-label"></label>
+                                <input asp-for="EditingPreference.ProductPrice" hidden />
+                                <input class="form-control" id="diplyPrice" readonly />
                             </div>
                             <div class="mb-3">
-                                <label for="feeRate" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].FeeRate)</label>
-                                <input type="text" class="form-control" id="feeRate" disabled />
+                                <label asp-for="EditingPreference.FeeRate" class="form-label">手續費</label>
+                                <input asp-for="EditingPreference.FeeRate" hidden />
+                                <input type="text" id="displayFeeRate" class="form-control" readonly />
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="orderQuantity" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].OrderQuantity)</label>
-                            <input type="number" class="form-control" id="orderQuantity" name="OrderQuantity" min="1" required />
+                            <label asp-for="EditingPreference.OrderQuantity" class="form-label"></label>
+                            <input asp-for="EditingPreference.OrderQuantity" class="form-control" type="number" min="1" required />
                         </div>
 
                         <div class="mb-3">
-                            <label for="accountNumber" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].AccountNumber)</label>
-                            <select class="form-select" id="accountSelect" name="AccountNumber" required onchange="onAccountChange()">
+                            <label asp-for="EditingPreference.UserId" class="form-label"></label>
+                            <select asp-for="EditingPreference.UserId" class="form-select" onchange="onAccountChange()" required>
                                 <option value="">請選擇帳號</option>
-                                @if (Model.Users != null)
+                                @foreach (var user in Model.Users)
                                 {
-                                    @foreach (var user in Model.Users)
-                                    {
-                                        <option value="@user.AccountNumber"
-                                                data-name="@user.UserName"
-                                                data-email="@user.Email">
-                                            @user.AccountNumber
-                                        </option>
-                                    }
-                                })
+                                    <option value="@user.UserId"
+                                            data-name="@user.UserName"
+                                            data-email="@user.Email">
+                                        @user.AccountNumber
+                                    </option>
+                                }
                             </select>
                         </div>
 
                         <div id="userInfo" style="display:none;">
                             <div class="mb-3">
-                                <label for="userName" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].UserName)</label>
-                                <input type="text" class="form-control" id="userName" disabled />
+                                <label asp-for="EditingPreference.UserName" class="form-label">使用者姓名</label>
+                                <input asp-for="EditingPreference.UserName" class="form-control" hidden />
+                                <input type="text" id="displayUserName" class="form-control" readonly />
                             </div>
                             <div class="mb-3">
-                                <label for="userEmail" class="form-label">@Html.DisplayNameFor(model => model.Preferences[0].Email)</label>
-                                <input type="email" class="form-control" id="userEmail" disabled />
+                                <label asp-for="EditingPreference.Email" class="form-label"></label>
+                                <input asp-for="EditingPreference.Email" class="form-control" hidden />
+                                <input id="displayUserEmail" class="form-control" readonly />
                             </div>
                         </div>
                     </div>
@@ -153,35 +154,43 @@
     }
 
     function onProductChange() {
-        const select = document.getElementById('productId');
+        const select = document.getElementById('EditingPreference_ProductId');
         const selectedOption = select.options[select.selectedIndex];
         const price = selectedOption.getAttribute('data-price');
         const fee = selectedOption.getAttribute('data-fee');
 
         if (!select.value) {
             document.getElementById('productInfo').style.display = 'none';
-            document.getElementById('productPrice').value = '';
-            document.getElementById('feeRate').value = '';
+            document.getElementById('EditingPreference_ProductPrice').value = '';
+            document.getElementById('diplyPrice').value = '';
+            document.getElementById('EditingPreference_FeeRate').value = '';
+            document.getElementById('displayFeeRate').value = '';
         } else {
-            document.getElementById('productPrice').value = price;
-            document.getElementById('feeRate').value = fee;
+            document.getElementById('EditingPreference_ProductPrice').value = price;
+            document.getElementById('diplyPrice').value = price;
+            document.getElementById('EditingPreference_FeeRate').value = fee;
+            document.getElementById('displayFeeRate').value = fee;
             document.getElementById('productInfo').style.display = 'block';
         }
     }
 
     function onAccountChange() {
-        const select = document.getElementById('accountSelect');
+        const select = document.getElementById('EditingPreference_UserId');
         const selectedOption = select.options[select.selectedIndex];
         const name = selectedOption.getAttribute('data-name');
         const email = selectedOption.getAttribute('data-email');
 
         if (!select.value) {
             document.getElementById('userInfo').style.display = 'none';
-            document.getElementById('userName').value = '';
-            document.getElementById('userEmail').value = '';
+            document.getElementById('EditingPreference_UserName').value = '';
+            document.getElementById('displayUserName').value = '';
+            document.getElementById('EditingPreference_Email').value = '';
+            document.getElementById('displayUserEmail').value = '';
         } else {
-            document.getElementById('userName').value = name;
-            document.getElementById('userEmail').value = email;
+            document.getElementById('EditingPreference_UserName').value = name;
+            document.getElementById('displayUserName').value = name;
+            document.getElementById('EditingPreference_Email').value = email;
+            document.getElementById('displayUserEmail').value = email;
             document.getElementById('userInfo').style.display = 'block';
         }
     }
