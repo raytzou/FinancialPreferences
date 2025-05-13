@@ -4,6 +4,13 @@ namespace FinancialPreferences.Models
 {
     public class FinancialPreferenceViewModel
     {
+        public List<PreferenceTableRowViewModel> Preferences { get; set; }
+        public List<Common.Product> Products { get; set; }
+        public List<Common.User> Users { get; set; }
+    }
+
+    public class PreferenceTableRowViewModel
+    {
         [Display(Name = "產品名稱")]
         public string ProductName { get; set; }
         [Display(Name = "產品價格")]
@@ -20,8 +27,5 @@ namespace FinancialPreferences.Models
         public string AccountNumber { get; set; }
         [Display(Name = "聯絡 Email")]
         public string Email { get; set; }
-        public List<FinancialPreferenceViewModel> Preferences { get; set; }
-        public List<Common.Product> Products { get; set; }
-        public List<Common.User> Users { get; set; }
     }
 }
