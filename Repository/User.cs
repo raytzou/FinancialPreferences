@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Repository
 {
-    public class User : IUser
+    public class User : IUserRepository
     {
         private readonly string _connectionString;
 

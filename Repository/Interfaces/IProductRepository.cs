@@ -1,6 +1,6 @@
 ﻿namespace Repository.Interfaces
 {
-    public interface IProduct
+    public interface IProductRepository
     {
         IEnumerable<Common.Models.Product> GetProducts();
     }

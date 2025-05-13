@@ -6,14 +6,14 @@ namespace FinancialPreferences.Controllers
 {
     public class FinancialPreferences : Controller
     {
-        private readonly IProduct _productRepository;
-        private readonly IUser _userRepository;
-        private readonly IUserPreference _userPreferenceRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IUserPreferenceRepository _userPreferenceRepository;
 
         public FinancialPreferences(
-            IProduct productRepository,
-            IUser userRepository,
-            IUserPreference userPreferenceRepository)
+            IProductRepository productRepository,
+            IUserRepository userRepository,
+            IUserPreferenceRepository userPreferenceRepository)
         {
             _productRepository = productRepository;
             _userRepository = userRepository;

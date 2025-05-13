@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Repository
 {
-    public class Product : IProduct
+    public class Product : IProductRepository
     {
         private readonly string _connectionString;
 

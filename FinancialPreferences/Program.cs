@@ -12,9 +12,9 @@ namespace FinancialPreferences
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddScoped<IProduct, Product>();
-            builder.Services.AddScoped<IUser, User>();
-            builder.Services.AddScoped<IUserPreference, UserPreference>();
+            builder.Services.AddScoped<IProductRepository, Product>();
+            builder.Services.AddScoped<IUserRepository, User>();
+            builder.Services.AddScoped<IUserPreferenceRepository, UserPreference>();
 
             var app = builder.Build();
 
