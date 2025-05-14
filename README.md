@@ -56,5 +56,3 @@ FinancialPreferences.sln
 - JavaScript 發送 POST 時透過 `getAntiForgeryToken()` 附帶驗證碼
 
 ---
-
-📌 如需部署、建置或測試指引，請參見 `/DB/README.md` 或依需求擴充說明。
