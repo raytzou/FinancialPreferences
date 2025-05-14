@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancialPreferences", "FinancialPreferences\FinancialPreferences.csproj", "{D14A790D-A291-40FF-ADBA-BEECB9C75668}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BussinessLogic", "Service\BussinessLogic.csproj", "{3BACD282-53E2-4A40-8CEC-9AA0A6F51D3B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "Service\BusinessLogic.csproj", "{3BACD282-53E2-4A40-8CEC-9AA0A6F51D3B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{AE29F8B4-728E-4007-BD94-B4B8B74556AD}"
 EndProject
