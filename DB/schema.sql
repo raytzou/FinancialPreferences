@@ -27,3 +27,14 @@ CREATE TABLE [dbo].[UserPreferences] (
     CONSTRAINT FK_UserPreferences_Products FOREIGN KEY ([ProductId])
         REFERENCES [dbo].[Products]([ProductId])
 );
+
+CREATE TABLE [dbo].[Houses] (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    HouseName NVARCHAR(200) NOT NULL,
+    Address NVARCHAR(500) NOT NULL,
+    TotalPrice DECIMAL(18,2) NOT NULL,
+    FloorArea DECIMAL(8,2) NOT NULL,
+    Description NVARCHAR(2000) NULL,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    UpdatedDate DATETIME2 NOT NULL DEFAULT GETUTCDATE()
+);
