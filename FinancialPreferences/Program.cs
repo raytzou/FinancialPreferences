@@ -24,6 +24,7 @@ namespace FinancialPreferences
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IHouseRepository, HouseRepository>();
             builder.Services.AddScoped<IUserPreferenceRepository, UserPreferenceRepository>();
             builder.Services.AddScoped<IFinancialPreferencesService, FinancialPreferencesService>();
 
