@@ -17,4 +17,8 @@
     <Folder Include="Models\Responses\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
+  </ItemGroup>
+
 </Project>
