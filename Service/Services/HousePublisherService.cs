@@ -15,9 +15,21 @@ namespace BusinessLogic.Services
 
         public List<House> GetAllHouses() => _repository.GetAll().ToList();
 
-        public void Create()
+        public void Create(string houseName, string address, decimal totalPrice, decimal floorArea, string description)
         {
-            throw new NotImplementedException();
+            _repository.Create(new House()
+            {
+                Id = Guid.NewGuid(),
+                HouseName = houseName,
+                Address = address,
+                TotalPrice = totalPrice,
+                FloorArea = floorArea,
+                Description = description,
+                CreatedDate = DateTime.Now,
+                UpdatedDate = DateTime.Now,
+            });
+
+            _repository.CommitChanges();
         }
 
         public void Delete()
