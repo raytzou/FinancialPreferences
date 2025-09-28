@@ -27,6 +27,7 @@ namespace FinancialPreferences
             builder.Services.AddScoped<IHouseRepository, HouseRepository>();
             builder.Services.AddScoped<IUserPreferenceRepository, UserPreferenceRepository>();
             builder.Services.AddScoped<IFinancialPreferencesService, FinancialPreferencesService>();
+            builder.Services.AddScoped<IHousePublisherService, HousePublisherService>();
 
             var app = builder.Build();
 
