@@ -26,5 +26,10 @@ namespace BusinessLogic.Services
         {
             throw new NotImplementedException();
         }
+
+        public List<string> Validate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

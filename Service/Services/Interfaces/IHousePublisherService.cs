@@ -5,5 +5,6 @@
         void Create();
         void Update();
         void Delete();
+        List<string> Validate();
     }
 }
