@@ -21,29 +21,27 @@ namespace FinancialPreferences.Controllers
         [HttpPost]
         public ActionResult<House> Create([FromBody] House request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var validationErrors = _service.Validate(request);
             if (validationErrors.Count > 0)
             {
-                foreach (var error in validationErrors)
+                // 回傳自訂的錯誤格式，不使用 ModelState
+                return BadRequest(new
                 {
-                    ModelState.AddModelError("", error);
-                }
-                return BadRequest(ModelState);
+                    message = "驗證失敗",
+                    errors = validationErrors
+                });
             }
 
             try
             {
                 _service.Create(request.HouseName, request.Address, request.TotalPrice, request.FloorArea, request.Description);
 
+                // 回傳 201 Created 狀態碼和新建立的資源
                 return CreatedAtAction(nameof(GetAllHouses), new { id = request.Id }, request);
             }
             catch (Exception ex)
             {
+                // 記錄錯誤並回傳 500 Internal Server Error
                 return StatusCode(500, new { message = "建立房屋時發生內部錯誤", error = ex.Message });
             }
         }

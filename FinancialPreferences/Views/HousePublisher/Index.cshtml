@@ -518,77 +518,6 @@
             }
         }
 
-        // 儲存房屋
-        function saveHouse() {
-            const form = document.getElementById('houseForm');
-
-            if (validateForm()) {
-                // 收集表單資料
-                const formData = {
-                    id: document.getElementById('houseId').value || null,
-                    houseName: document.getElementById('houseName').value.trim(),
-                    address: document.getElementById('address').value.trim(),
-                    totalPrice: parseFloat(document.getElementById('totalPrice').value),
-                    floorArea: parseFloat(document.getElementById('floorArea').value),
-                    description: document.getElementById('description').value.trim() || null
-                };
-
-                console.log('準備儲存的資料：', formData);
-
-                // 這裡之後會呼叫 API
-                // if (currentEditingId) {
-                //     // 更新
-                //     updateHouseViaAPI(formData);
-                // } else {
-                //     // 新增
-                //     createHouseViaAPI(formData);
-                // }
-
-                // 暫時顯示成功訊息
-                alert(currentEditingId ? '房屋資料更新成功！' : '房屋新增成功！');
-
-                // 關閉 Modal
-                bootstrap.Modal.getInstance(document.getElementById('houseModal')).hide();
-
-                // 重新載入列表
-                loadHouseList();
-            }
-        }
-
-        // 刪除房屋
-        function deleteHouse(houseId) {
-            currentDeletingId = houseId;
-
-            const house = findHouseById(houseId);
-            const houseName = house ? house.houseName : '未知房屋';
-
-            document.getElementById('deleteHouseName').textContent = houseName;
-
-            const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-            deleteModal.show();
-        }
-
-        // 確認刪除
-        function confirmDelete() {
-            if (currentDeletingId) {
-                console.log('刪除房屋 ID：', currentDeletingId);
-
-                // 這裡之後會呼叫 API
-                // deleteHouseViaAPI(currentDeletingId);
-
-                // 暫時顯示成功訊息
-                alert('房屋刪除成功！');
-
-                // 關閉 Modal
-                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-
-                // 重新載入列表
-                loadHouseList();
-
-                currentDeletingId = null;
-            }
-        }
-
         // 表單驗證
         function validateForm() {
             const form = document.getElementById('houseForm');
@@ -629,12 +558,254 @@
             return isValid;
         }
 
-        // 清除驗證樣式
+        // 儲存房屋
+        async function saveHouse() {
+            const form = document.getElementById('houseForm');
+
+            if (validateForm()) {
+                // 收集表單資料
+                const formData = {
+                    // 新增時不傳送 id，讓後端自動產生
+                    houseName: document.getElementById('houseName').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    totalPrice: parseFloat(document.getElementById('totalPrice').value),
+                    floorArea: parseFloat(document.getElementById('floorArea').value),
+                    description: document.getElementById('description').value.trim() || null
+                };
+
+                // 編輯時才加入 id
+                if (currentEditingId) {
+                    formData.id = currentEditingId;
+                }
+
+                console.log('準備儲存的資料：', formData);
+
+                // 顯示儲存中狀態
+                const saveButton = document.querySelector('#houseModal .btn-primary');
+                const originalText = saveButton.innerHTML;
+                saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 儲存中...';
+                saveButton.disabled = true;
+
+                try {
+                    if (currentEditingId) {
+                        // 更新 - 之後實作
+                        await updateHouseViaAPI(formData);
+                    } else {
+                        // 新增
+                        await createHouseViaAPI(formData);
+                    }
+
+                    // 成功後關閉 Modal 並重新載入列表
+                    bootstrap.Modal.getInstance(document.getElementById('houseModal')).hide();
+                    loadHouseList();
+                    
+                    // 顯示成功訊息
+                    showSuccessMessage(currentEditingId ? '房屋資料更新成功！' : '房屋新增成功！');
+                    
+                } catch (error) {
+                    console.error('儲存房屋時發生錯誤：', error);
+                } finally {
+                    // 恢復按鈕狀態
+                    saveButton.innerHTML = originalText;
+                    saveButton.disabled = false;
+                }
+            }
+        }
+
+        // 新增房屋 API 呼叫
+        async function createHouseViaAPI(houseData) {
+            const response = await fetch(API_BASE_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(houseData)
+            });
+
+            if (!response.ok) {
+                if (response.status === 400) {
+                    // 驗證錯誤 - 顯示伺服器端驗證訊息
+                    const errorData = await response.json();
+                    showServerValidationErrors(errorData);
+                    throw new Error('驗證失敗');
+                } else if (response.status === 500) {
+                    // 伺服器錯誤
+                    const errorData = await response.json();
+                    showErrorModal('伺服器錯誤', errorData.message || '建立房屋時發生內部錯誤');
+                    throw new Error(errorData.message || '伺服器內部錯誤');
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            }
+
+            const result = await response.json();
+            console.log('房屋建立成功：', result);
+            return result;
+        }
+
+        // 更新房屋 API 呼叫 (預留)
+        async function updateHouseViaAPI(houseData) {
+            // 之後實作更新 API
+            throw new Error('更新功能尚未實作');
+        }
+
+        // 顯示伺服器端驗證錯誤
+        function showServerValidationErrors(errorData) {
+            console.log('伺服器驗證錯誤：', errorData);
+            
+            // 清除之前的驗證樣式
+            clearValidationStyles();
+            
+            // 處理新的錯誤格式 (Service 層驗證)
+            if (errorData.errors && Array.isArray(errorData.errors)) {
+                // Service 層回傳的是 string[] 格式
+                showValidationErrorAlert(errorData.errors);
+                return;
+            }
+            
+            // 兼容舊的 ModelState 錯誤格式 (如果有其他 API 仍使用)
+            if (errorData.errors && typeof errorData.errors === 'object') {
+                // 處理 ModelState 錯誤
+                let hasErrors = false;
+                
+                // 處理一般錯誤訊息 (沒有特定欄位的錯誤)
+                if (errorData.errors[''] && errorData.errors[''].length > 0) {
+                    showValidationErrorAlert(errorData.errors['']);
+                    hasErrors = true;
+                }
+                
+                // 處理特定欄位的錯誤
+                Object.keys(errorData.errors).forEach(fieldName => {
+                    if (fieldName && fieldName !== '') {
+                        const errors = errorData.errors[fieldName];
+                        const fieldElement = getFieldElementByName(fieldName);
+                        
+                        if (fieldElement && errors.length > 0) {
+                            fieldElement.classList.add('is-invalid');
+                            
+                            // 更新錯誤訊息
+                            const feedbackElement = fieldElement.parentNode.querySelector('.invalid-feedback') ||
+                                                  fieldElement.closest('.mb-3').querySelector('.invalid-feedback');
+                            if (feedbackElement) {
+                                feedbackElement.textContent = errors[0]; // 顯示第一個錯誤訊息
+                            }
+                            hasErrors = true;
+                        }
+                    }
+                });
+                
+                if (!hasErrors) {
+                    // 如果沒有特定欄位錯誤，顯示一般錯誤訊息
+                    const allErrors = Object.values(errorData.errors).flat();
+                    if (allErrors.length > 0) {
+                        showValidationErrorAlert(allErrors);
+                    }
+                }
+                return;
+            }
+            
+            // 處理其他格式的錯誤
+            showValidationErrorAlert(['儲存時發生驗證錯誤，請檢查輸入內容']);
+        }
+
+        // 根據欄位名稱取得對應的 DOM 元素
+        function getFieldElementByName(fieldName) {
+            const fieldMapping = {
+                'HouseName': 'houseName',
+                'Address': 'address', 
+                'TotalPrice': 'totalPrice',
+                'FloorArea': 'floorArea',
+                'Description': 'description'
+            };
+            
+            const elementId = fieldMapping[fieldName] || fieldName.toLowerCase();
+            return document.getElementById(elementId);
+        }
+
+        // 顯示驗證錯誤警告
+        function showValidationErrorAlert(errors) {
+            // 移除現有的錯誤警告
+            const existingAlert = document.querySelector('#houseModal .validation-error-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // 建立錯誤警告元素
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger validation-error-alert mt-3';
+            alertDiv.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>驗證錯誤：</strong>
+                <ul class="mb-0 mt-2">
+                    ${errors.map(error => `<li>${escapeHtml(error)}</li>`).join('')}
+                </ul>
+            `;
+            
+            // 插入到表單前面
+            const modalBody = document.querySelector('#houseModal .modal-body');
+            const form = document.getElementById('houseForm');
+            modalBody.insertBefore(alertDiv, form);
+            
+            // 滾動到錯誤訊息位置
+            alertDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // 顯示錯誤模態框
+        function showErrorModal(title, message) {
+            // 簡單的錯誤顯示，可以之後改為更美觀的模態框
+            alert(`${title}\n\n${message}`);
+        }
+
+        // 顯示成功訊息
+        function showSuccessMessage(message) {
+            // 簡單的成功訊息，可以之後改為更美觀的通知
+            // 可以使用 Toast 或其他通知組件
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                <i class="fas fa-check-circle"></i> ${escapeHtml(message)}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // 3 秒後自動消失
+            setTimeout(() => {
+                if (alertDiv && alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 3000);
+        }
+
+        // 清除驗證樣式（增強版）
         function clearValidationStyles() {
             const form = document.getElementById('houseForm');
             const inputs = form.querySelectorAll('.form-control, .form-select');
             inputs.forEach(input => {
                 input.classList.remove('is-valid', 'is-invalid');
+            });
+            
+            // 移除驗證錯誤警告
+            const existingAlert = document.querySelector('#houseModal .validation-error-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // 重置錯誤訊息為預設值
+            const feedbacks = form.querySelectorAll('.invalid-feedback');
+            feedbacks.forEach(feedback => {
+                const input = feedback.closest('.mb-3').querySelector('.form-control');
+                if (input) {
+                    const fieldId = input.id;
+                    const defaultMessages = {
+                        'houseName': '請輸入房屋名稱',
+                        'address': '請輸入地址',
+                        'totalPrice': '請輸入正確的價格',
+                        'floorArea': '請輸入正確的坪數'
+                    };
+                    feedback.textContent = defaultMessages[fieldId] || '請輸入有效的資料';
+                }
             });
         }
 
