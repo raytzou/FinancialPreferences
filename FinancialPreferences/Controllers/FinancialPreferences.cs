@@ -1,4 +1,4 @@
-﻿using BussinessLogic.Services.Interfaces;
+﻿using BusinessLogic.Services.Interfaces;
 using Common.Models;
 using FinancialPreferences.Models;
 using FinancialPreferences.Models.Requests;

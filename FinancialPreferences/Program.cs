@@ -1,5 +1,5 @@
-using BussinessLogic.Services;
-using BussinessLogic.Services.Interfaces;
+using BusinessLogic.Services;
+using BusinessLogic.Services.Interfaces;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Repository;

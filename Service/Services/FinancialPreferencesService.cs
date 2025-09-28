@@ -1,8 +1,8 @@
-﻿using BussinessLogic.Services.Interfaces;
+﻿using BusinessLogic.Services.Interfaces;
 using Common.Models;
 using Repository.Interfaces;
 
-namespace BussinessLogic.Services
+namespace BusinessLogic.Services
 {
     public class FinancialPreferencesService : IFinancialPreferencesService
     {

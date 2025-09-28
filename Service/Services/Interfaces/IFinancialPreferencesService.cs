@@ -1,4 +1,4 @@
-﻿namespace BussinessLogic.Services.Interfaces
+﻿namespace BusinessLogic.Services.Interfaces
 {
     public interface IFinancialPreferencesService
     {
