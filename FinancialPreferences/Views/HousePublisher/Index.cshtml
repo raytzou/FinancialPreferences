@@ -35,7 +35,28 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="table-responsive">
+                    <!-- 載入指示器 -->
+                    <div id="loadingIndicator" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">載入中...</span>
+                        </div>
+                        <p class="mt-2">正在載入房屋資料...</p>
+                    </div>
+
+                    <!-- 錯誤訊息 -->
+                    <div id="errorMessage" class="alert alert-danger" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText">載入資料時發生錯誤，請稍後再試。</span>
+                    </div>
+
+                    <!-- 無資料訊息 -->
+                    <div id="noDataMessage" class="text-center py-4" style="display: none;">
+                        <i class="fas fa-home fa-3x text-muted"></i>
+                        <h5 class="mt-3 text-muted">尚無房屋資料</h5>
+                        <p class="text-muted">點擊上方「新增房屋」按鈕開始建立房屋資料</p>
+                    </div>
+
+                    <div class="table-responsive" id="houseTableContainer" style="display: none;">
                         <table class="table table-striped table-hover" id="houseTable">
                             <thead class="table-dark">
                                 <tr>
@@ -48,49 +69,13 @@
                                 </tr>
                             </thead>
                             <tbody id="houseTableBody">
-                                <!-- 範例資料 -->
-                                <tr>
-                                    <td>陽明山景觀別墅</td>
-                                    <td>台北市士林區陽明山路123號</td>
-                                    <td class="text-success fw-bold">NT$ 25,000,000</td>
-                                    <td>45.5 坪</td>
-                                    <td>2024-01-15</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info me-1" onclick="viewHouse('sample-id-1')" data-bs-toggle="modal" data-bs-target="#houseDetailModal">
-                                            <i class="fas fa-eye"></i> 檢視
-                                        </button>
-                                        <button class="btn btn-sm btn-warning me-1" onclick="editHouse('sample-id-1')" data-bs-toggle="modal" data-bs-target="#houseModal">
-                                            <i class="fas fa-edit"></i> 編輯
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="deleteHouse('sample-id-1')">
-                                            <i class="fas fa-trash"></i> 刪除
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>信義區豪華公寓</td>
-                                    <td>台北市信義區信義路五段88號</td>
-                                    <td class="text-success fw-bold">NT$ 18,500,000</td>
-                                    <td>32.8 坪</td>
-                                    <td>2024-01-10</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info me-1" onclick="viewHouse('sample-id-2')" data-bs-toggle="modal" data-bs-target="#houseDetailModal">
-                                            <i class="fas fa-eye"></i> 檢視
-                                        </button>
-                                        <button class="btn btn-sm btn-warning me-1" onclick="editHouse('sample-id-2')" data-bs-toggle="modal" data-bs-target="#houseModal">
-                                            <i class="fas fa-edit"></i> 編輯
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="deleteHouse('sample-id-2')">
-                                            <i class="fas fa-trash"></i> 刪除
-                                        </button>
-                                    </td>
-                                </tr>
+                                <!-- 動態載入的房屋資料 -->
                             </tbody>
                         </table>
                     </div>
 
                     <!-- 分頁 -->
-                    <nav aria-label="房屋列表分頁">
+                    <nav aria-label="房屋列表分頁" id="paginationContainer" style="display: none;">
                         <ul class="pagination justify-content-center">
                             <li class="page-item disabled">
                                 <a class="page-link" href="#" tabindex="-1">上一頁</a>
@@ -120,7 +105,7 @@
             <div class="modal-body">
                 <form id="houseForm">
                     <input type="hidden" id="houseId" name="id">
-                    
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
@@ -258,6 +243,155 @@
         // 全域變數
         let currentEditingId = null;
         let currentDeletingId = null;
+        let housesData = []; // 儲存房屋資料
+
+        // API 基礎 URL
+        const API_BASE_URL = '/api/houses';
+
+        // 頁面載入完成後初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('房屋刊登系統已載入');
+            loadHouseList(); // 載入房屋列表
+        });
+
+        // 載入房屋列表
+        async function loadHouseList() {
+            try {
+                showLoadingIndicator();
+                hideErrorMessage();
+
+                console.log('正在從 API 載入房屋資料...');
+
+                const response = await fetch(API_BASE_URL, {
+                    method: 'GET',
+                    headers:
+                     {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const houses = await response.json();
+                housesData = houses; // 儲存到全域變數
+
+                console.log('成功載入房屋資料：', houses);
+
+                hideLoadingIndicator();
+                renderHouseTable(houses);
+
+            } catch (error) {
+                console.error('載入房屋資料時發生錯誤：', error);
+                hideLoadingIndicator();
+                showErrorMessage('載入房屋資料時發生錯誤：' + error.message);
+            }
+        }
+
+        // 渲染房屋表格
+        function renderHouseTable(houses) {
+            const tableBody = document.getElementById('houseTableBody');
+            const tableContainer = document.getElementById('houseTableContainer');
+            const noDataMessage = document.getElementById('noDataMessage');
+            const paginationContainer = document.getElementById('paginationContainer');
+
+            if (!houses || houses.length === 0) {
+                // 沒有資料時顯示提示訊息
+                tableContainer.style.display = 'none';
+                paginationContainer.style.display = 'none';
+                noDataMessage.style.display = 'block';
+                return;
+            }
+
+            // 有資料時顯示表格
+            noDataMessage.style.display = 'none';
+            tableContainer.style.display = 'block';
+            paginationContainer.style.display = 'block';
+
+            // 清空現有內容
+            tableBody.innerHTML = '';
+
+            // 生成表格行
+            houses.forEach(house => {
+                const row = createHouseTableRow(house);
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 建立房屋表格行
+        function createHouseTableRow(house) {
+            const row = document.createElement('tr');
+
+            // 格式化價格
+            const formattedPrice = new Intl.NumberFormat('zh-TW', {
+                style: 'currency',
+                currency: 'TWD',
+                minimumFractionDigits: 0
+            }).format(house.totalPrice).replace('NT$', 'NT$');
+
+            // 格式化日期
+            const formattedDate = new Date(house.createdDate).toLocaleDateString('zh-TW');
+
+            row.innerHTML = `
+                <td>${escapeHtml(house.houseName)}</td>
+                <td>${escapeHtml(house.address)}</td>
+                <td class="text-success fw-bold">${formattedPrice}</td>
+                <td>${house.floorArea} 坪</td>
+                <td>${formattedDate}</td>
+                <td>
+                    <button class="btn btn-sm btn-info me-1" onclick="viewHouse('${house.id}')" data-bs-toggle="modal" data-bs-target="#houseDetailModal">
+                        <i class="fas fa-eye"></i> 檢視
+                    </button>
+                    <button class="btn btn-sm btn-warning me-1" onclick="editHouse('${house.id}')" data-bs-toggle="modal" data-bs-target="#houseModal">
+                        <i class="fas fa-edit"></i> 編輯
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteHouse('${house.id}')">
+                        <i class="fas fa-trash"></i> 刪除
+                    </button>
+                </td>
+            `;
+
+            return row;
+        }
+
+        // HTML 轉義函數
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 顯示載入指示器
+        function showLoadingIndicator() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('houseTableContainer').style.display = 'none';
+            document.getElementById('noDataMessage').style.display = 'none';
+        }
+
+        // 隱藏載入指示器
+        function hideLoadingIndicator() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+        }
+
+        // 顯示錯誤訊息
+        function showErrorMessage(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('houseTableContainer').style.display = 'none';
+            document.getElementById('noDataMessage').style.display = 'none';
+        }
+
+        // 隱藏錯誤訊息
+        function hideErrorMessage() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // 根據 ID 尋找房屋資料
+        function findHouseById(houseId) {
+            return housesData.find(house => house.id === houseId);
+        }
 
         // 開啟新增 Modal
         function openCreateModal() {
@@ -265,7 +399,7 @@
             document.getElementById('houseForm').reset();
             document.getElementById('houseId').value = '';
             currentEditingId = null;
-            
+
             // 清除驗證樣式
             clearValidationStyles();
         }
@@ -274,10 +408,14 @@
         function editHouse(houseId) {
             currentEditingId = houseId;
             document.getElementById('houseModalLabel').textContent = '編輯房屋';
-            
-            // 這裡之後會用 API 載入資料
-            // 暫時使用範例資料
-            loadHouseDataForEdit(houseId);
+
+            const house = findHouseById(houseId);
+            if (house) {
+                loadHouseDataForEdit(house);
+            } else {
+                console.error('找不到指定的房屋：', houseId);
+                alert('找不到指定的房屋資料');
+            }
         }
 
         // 從詳細檢視頁面開啟編輯
@@ -287,85 +425,54 @@
                 const editModal = new bootstrap.Modal(document.getElementById('houseModal'));
                 editModal.show();
             }, { once: true });
-            
+
             bootstrap.Modal.getInstance(document.getElementById('houseDetailModal')).hide();
         }
 
-        // 載入編輯資料（範例）
-        function loadHouseDataForEdit(houseId) {
-            // 範例資料，之後替換為 API 呼叫
-            const sampleData = {
-                'sample-id-1': {
-                    id: 'sample-id-1',
-                    houseName: '陽明山景觀別墅',
-                    address: '台北市士林區陽明山路123號',
-                    totalPrice: 25000000,
-                    floorArea: 45.5,
-                    description: '擁有絕佳山景視野，環境清幽，適合追求高品質生活的買家。'
-                },
-                'sample-id-2': {
-                    id: 'sample-id-2',
-                    houseName: '信義區豪華公寓',
-                    address: '台北市信義區信義路五段88號',
-                    totalPrice: 18500000,
-                    floorArea: 32.8,
-                    description: '位於信義計畫區核心地帶，交通便利，生活機能完善。'
-                }
-            };
-
-            const house = sampleData[houseId];
-            if (house) {
-                document.getElementById('houseId').value = house.id;
-                document.getElementById('houseName').value = house.houseName;
-                document.getElementById('address').value = house.address;
-                document.getElementById('totalPrice').value = house.totalPrice;
-                document.getElementById('floorArea').value = house.floorArea;
-                document.getElementById('description').value = house.description || '';
-            }
+        // 載入編輯資料
+        function loadHouseDataForEdit(house) {
+            document.getElementById('houseId').value = house.id;
+            document.getElementById('houseName').value = house.houseName || '';
+            document.getElementById('address').value = house.address || '';
+            document.getElementById('totalPrice').value = house.totalPrice || '';
+            document.getElementById('floorArea').value = house.floorArea || '';
+            document.getElementById('description').value = house.description || '';
         }
 
         // 檢視房屋詳細資料
         function viewHouse(houseId) {
             currentEditingId = houseId;
-            
-            // 範例資料，之後替換為 API 呼叫
-            const sampleData = {
-                'sample-id-1': {
-                    houseName: '陽明山景觀別墅',
-                    address: '台北市士林區陽明山路123號',
-                    totalPrice: 'NT$ 25,000,000',
-                    floorArea: '45.5 坪',
-                    description: '擁有絕佳山景視野，環境清幽，適合追求高品質生活的買家。庭院寬敞，可供休閒活動，室內裝潢精緻，採光良好。',
-                    createdDate: '2024-01-15 10:30:00',
-                    updatedDate: '2024-01-15 10:30:00'
-                },
-                'sample-id-2': {
-                    houseName: '信義區豪華公寓',
-                    address: '台北市信義區信義路五段88號',
-                    totalPrice: 'NT$ 18,500,000',
-                    floorArea: '32.8 坪',
-                    description: '位於信義計畫區核心地帶，交通便利，生活機能完善。近捷運站，周邊有多家百貨公司和餐廳。',
-                    createdDate: '2024-01-10 14:20:00',
-                    updatedDate: '2024-01-10 14:20:00'
-                }
-            };
 
-            const house = sampleData[houseId];
+            const house = findHouseById(houseId);
             if (house) {
-                document.getElementById('detailHouseName').textContent = house.houseName;
-                document.getElementById('detailAddress').textContent = house.address;
-                document.getElementById('detailTotalPrice').textContent = house.totalPrice;
-                document.getElementById('detailFloorArea').textContent = house.floorArea;
+                // 格式化價格
+                const formattedPrice = new Intl.NumberFormat('zh-TW', {
+                    style: 'currency',
+                    currency: 'TWD',
+                    minimumFractionDigits: 0
+                }).format(house.totalPrice);
+
+                // 格式化日期時間
+                const formattedCreatedDate = new Date(house.createdDate).toLocaleString('zh-TW');
+                const formattedUpdatedDate = new Date(house.updatedDate).toLocaleString('zh-TW');
+
+                document.getElementById('detailHouseName').textContent = house.houseName || '-';
+                document.getElementById('detailAddress').textContent = house.address || '-';
+                document.getElementById('detailTotalPrice').textContent = formattedPrice;
+                document.getElementById('detailFloorArea').textContent = `${house.floorArea} 坪`;
                 document.getElementById('detailDescription').textContent = house.description || '無描述';
-                document.getElementById('detailCreatedDate').textContent = house.createdDate;
-                document.getElementById('detailUpdatedDate').textContent = house.updatedDate;
+                document.getElementById('detailCreatedDate').textContent = formattedCreatedDate;
+                document.getElementById('detailUpdatedDate').textContent = formattedUpdatedDate;
+            } else {
+                console.error('找不到指定的房屋：', houseId);
+                alert('找不到指定的房屋資料');
             }
         }
 
         // 儲存房屋
         function saveHouse() {
             const form = document.getElementById('houseForm');
-            
+
             if (validateForm()) {
                 // 收集表單資料
                 const formData = {
@@ -378,7 +485,7 @@
                 };
 
                 console.log('準備儲存的資料：', formData);
-                
+
                 // 這裡之後會呼叫 API
                 // if (currentEditingId) {
                 //     // 更新
@@ -390,10 +497,10 @@
 
                 // 暫時顯示成功訊息
                 alert(currentEditingId ? '房屋資料更新成功！' : '房屋新增成功！');
-                
+
                 // 關閉 Modal
                 bootstrap.Modal.getInstance(document.getElementById('houseModal')).hide();
-                
+
                 // 重新載入列表
                 loadHouseList();
             }
@@ -402,15 +509,12 @@
         // 刪除房屋
         function deleteHouse(houseId) {
             currentDeletingId = houseId;
-            
-            // 範例資料，之後從 API 取得房屋名稱
-            const houseNames = {
-                'sample-id-1': '陽明山景觀別墅',
-                'sample-id-2': '信義區豪華公寓'
-            };
-            
-            document.getElementById('deleteHouseName').textContent = houseNames[houseId] || '未知房屋';
-            
+
+            const house = findHouseById(houseId);
+            const houseName = house ? house.houseName : '未知房屋';
+
+            document.getElementById('deleteHouseName').textContent = houseName;
+
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
             deleteModal.show();
         }
@@ -419,19 +523,19 @@
         function confirmDelete() {
             if (currentDeletingId) {
                 console.log('刪除房屋 ID：', currentDeletingId);
-                
+
                 // 這裡之後會呼叫 API
                 // deleteHouseViaAPI(currentDeletingId);
-                
+
                 // 暫時顯示成功訊息
                 alert('房屋刪除成功！');
-                
+
                 // 關閉 Modal
                 bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
-                
+
                 // 重新載入列表
                 loadHouseList();
-                
+
                 currentDeletingId = null;
             }
         }
@@ -446,7 +550,7 @@
 
             // 驗證必填欄位
             const requiredFields = ['houseName', 'address', 'totalPrice', 'floorArea'];
-            
+
             requiredFields.forEach(fieldId => {
                 const field = document.getElementById(fieldId);
                 if (!field.value.trim()) {
@@ -485,17 +589,24 @@
             });
         }
 
-        // 載入房屋列表
-        function loadHouseList() {
-            console.log('重新載入房屋列表...');
-            // 這裡之後會呼叫 API 載入資料並更新表格
-        }
-
         // 搜尋功能
         document.getElementById('searchBtn').addEventListener('click', function() {
             const searchTerm = document.getElementById('searchInput').value.trim();
             console.log('搜尋條件：', searchTerm);
-            // 這裡之後會呼叫 API 進行搜尋
+
+            if (!searchTerm) {
+                // 如果搜尋條件為空，顯示全部資料
+                renderHouseTable(housesData);
+                return;
+            }
+
+            // 本地搜尋過濾
+            const filteredHouses = housesData.filter(house =>
+                house.houseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                house.address.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            renderHouseTable(filteredHouses);
         });
 
         // 按 Enter 鍵搜尋
@@ -504,11 +615,6 @@
                 document.getElementById('searchBtn').click();
             }
         });
-
-        // 頁面載入完成後初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('房屋刊登系統已載入');
-        });
     </script>
 }
 
@@ -516,31 +622,52 @@
     .table th {
         white-space: nowrap;
     }
-    
+
     .btn-sm {
         padding: 0.25rem 0.5rem;
         font-size: 0.875rem;
     }
-    
+
     .text-success {
         font-weight: 600;
     }
-    
+
     .form-control-plaintext {
         padding-left: 0;
         border-bottom: 1px solid #dee2e6;
         background-color: transparent;
     }
-    
+
     .modal-lg {
         max-width: 800px;
     }
-    
+
     .invalid-feedback {
         display: block;
     }
-    
+
     .pagination {
         margin-top: 1rem;
+    }
+
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    #loadingIndicator {
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #noDataMessage {
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 </style>
