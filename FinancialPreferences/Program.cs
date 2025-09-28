@@ -1,5 +1,7 @@
 using BussinessLogic.Services;
 using BussinessLogic.Services.Interfaces;
+using DataAccess;
+using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Interfaces;
 
@@ -11,6 +13,12 @@ namespace FinancialPreferences
         {
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            // EntityFramework DbContext
+            builder.Services.AddDbContext<AppDbContext>(option =>
+            {
+                option.UseSqlServer(connectionString);
+            });
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
