@@ -159,7 +159,7 @@
 </div>
 
 <!-- 房屋詳細資料檢視 Modal -->
-<div class="modal fade" id="houseDetailModal" tabindex="-1" aria-labelledby="houseDetailModalLabel" aria-hidden="true">
+<div class="modal fade" id="houseDetailModal" tabindex="-1" aria-labelledby="houseDetailModalLabel" aria-hidden="true" x-data="houseDetailData">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -171,41 +171,41 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label fw-bold">房屋名稱</label>
-                            <p class="form-control-plaintext" id="detailHouseName">-</p>
+                            <p class="form-control-plaintext" x-text="house.houseName || '-'">-</p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">總價格</label>
-                            <p class="form-control-plaintext text-success fw-bold fs-5" id="detailTotalPrice">-</p>
+                            <p class="form-control-plaintext text-success fw-bold fs-5" x-text="formattedPrice">-</p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">坪數</label>
-                            <p class="form-control-plaintext" id="detailFloorArea">-</p>
+                            <p class="form-control-plaintext" x-text="house.floorArea ? `${house.floorArea} 坪` : '-'">-</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label fw-bold">地址</label>
-                            <p class="form-control-plaintext" id="detailAddress">-</p>
+                            <p class="form-control-plaintext" x-text="house.address || '-'">-</p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">建立時間</label>
-                            <p class="form-control-plaintext" id="detailCreatedDate">-</p>
+                            <p class="form-control-plaintext" x-text="formattedCreatedDate">-</p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">更新時間</label>
-                            <p class="form-control-plaintext" id="detailUpdatedDate">-</p>
+                            <p class="form-control-plaintext" x-text="formattedUpdatedDate">-</p>
                         </div>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold">描述</label>
                     <div class="border rounded p-3 bg-light">
-                        <p class="mb-0" id="detailDescription">無描述</p>
+                        <p class="mb-0" x-text="house.description || '無描述'">無描述</p>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning" onclick="editHouseFromDetail()">
+                <button type="button" class="btn btn-warning" x-on:click="editFromDetail()" x-show="house.id">
                     <i class="fas fa-edit"></i> 編輯
                 </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
@@ -240,6 +240,65 @@
 
 @section Scripts {
     <script>
+        // Alpine.js 資料物件 - 房屋詳細檢視
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('houseDetailData', () => ({
+                house: {
+                    id: '',
+                    houseName: '',
+                    address: '',
+                    totalPrice: 0,
+                    floorArea: 0,
+                    description: '',
+                    createdDate: '',
+                    updatedDate: ''
+                },
+                
+                // 計算屬性：格式化價格
+                get formattedPrice() {
+                    if (!this.house.totalPrice) return '-';
+                    return new Intl.NumberFormat('zh-TW', {
+                        style: 'currency',
+                        currency: 'TWD',
+                        minimumFractionDigits: 0
+                    }).format(this.house.totalPrice);
+                },
+                
+                // 計算屬性：格式化建立時間
+                get formattedCreatedDate() {
+                    if (!this.house.createdDate) return '-';
+                    return new Date(this.house.createdDate).toLocaleString('zh-TW');
+                },
+                
+                // 計算屬性：格式化更新時間
+                get formattedUpdatedDate() {
+                    if (!this.house.updatedDate) return '-';
+                    return new Date(this.house.updatedDate).toLocaleString('zh-TW');
+                },
+                
+                // 載入房屋資料
+                loadHouse(houseData) {
+                    this.house = { ...houseData };
+                },
+                
+                // 從詳細檢視切換到編輯模式
+                editFromDetail() {
+                    if (this.house.id) {
+                        // 關閉詳細檢視 modal
+                        const detailModal = bootstrap.Modal.getInstance(document.getElementById('houseDetailModal'));
+                        detailModal.hide();
+                        
+                        // 等待 modal 完全關閉後開啟編輯 modal
+                        setTimeout(() => {
+                            editHouse(this.house.id);
+                            const editModal = new bootstrap.Modal(document.getElementById('houseModal'));
+                            editModal.show();
+                        }, 300);
+                    }
+                }
+            }))
+        });
+
         // 全域變數
         let currentEditingId = null;
         let currentDeletingId = null;
@@ -418,7 +477,7 @@
             }
         }
 
-        // 從詳細檢視頁面開啟編輯
+        // 從詳細檢視頁面開啟編輯 (保留舊版本以防 Alpine.js 有問題)
         function editHouseFromDetail() {
             document.getElementById('houseDetailModal').addEventListener('hidden.bs.modal', function() {
                 editHouse(currentEditingId);
@@ -439,30 +498,20 @@
             document.getElementById('description').value = house.description || '';
         }
 
-        // 檢視房屋詳細資料
+        // 檢視房屋詳細資料 - 更新為使用 Alpine.js
         function viewHouse(houseId) {
             currentEditingId = houseId;
 
             const house = findHouseById(houseId);
             if (house) {
-                // 格式化價格
-                const formattedPrice = new Intl.NumberFormat('zh-TW', {
-                    style: 'currency',
-                    currency: 'TWD',
-                    minimumFractionDigits: 0
-                }).format(house.totalPrice);
-
-                // 格式化日期時間
-                const formattedCreatedDate = new Date(house.createdDate).toLocaleString('zh-TW');
-                const formattedUpdatedDate = new Date(house.updatedDate).toLocaleString('zh-TW');
-
-                document.getElementById('detailHouseName').textContent = house.houseName || '-';
-                document.getElementById('detailAddress').textContent = house.address || '-';
-                document.getElementById('detailTotalPrice').textContent = formattedPrice;
-                document.getElementById('detailFloorArea').textContent = `${house.floorArea} 坪`;
-                document.getElementById('detailDescription').textContent = house.description || '無描述';
-                document.getElementById('detailCreatedDate').textContent = formattedCreatedDate;
-                document.getElementById('detailUpdatedDate').textContent = formattedUpdatedDate;
+                // 取得 Alpine.js 實例並載入資料
+                const detailModal = document.getElementById('houseDetailModal');
+                const alpineInstance = Alpine.$data(detailModal);
+                if (alpineInstance) {
+                    alpineInstance.loadHouse(house);
+                }
+                
+                console.log('Alpine.js 載入房屋資料：', house);
             } else {
                 console.error('找不到指定的房屋：', houseId);
                 alert('找不到指定的房屋資料');
