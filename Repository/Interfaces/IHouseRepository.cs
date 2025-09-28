@@ -9,5 +9,6 @@ namespace Repository.Interfaces
         void Create(House house);
         void Update(House house);
         void Delete(Guid id);
+        void CommitChanges();
     }
 }

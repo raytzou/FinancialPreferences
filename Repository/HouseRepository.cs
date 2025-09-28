@@ -18,20 +18,27 @@ namespace Repository
 
         public House? GetById(Guid id) => GetAll().FirstOrDefault(x => x.Id == id);
 
-        public void Create(House house)
-        {
-            throw new NotImplementedException();
-        }
+        public void Create(House house) => _dbContext.Houses.Add(house);
 
         public void Delete(Guid id)
         {
-            throw new NotImplementedException();
-        }
+            var target = _dbContext.Houses.FirstOrDefault(x => x.Id == id) ?? throw new InvalidOperationException($"Cannot find the House entity. ID: {id}");
 
+            _dbContext.Houses.Remove(target);
+        }
 
         public void Update(House house)
         {
-            throw new NotImplementedException();
+            var target = _dbContext.Houses.FirstOrDefault(x => x.Id == house.Id) ?? throw new InvalidOperationException($"Cannot find the House entity. ID: {house.Id}");
+
+            target.HouseName = house.HouseName;
+            target.Address = house.Address;
+            target.TotalPrice = house.TotalPrice;
+            target.FloorArea = house.FloorArea;
+            target.Description = house.Description;
+            target.UpdatedDate = DateTime.Now;
         }
+
+        public void CommitChanges() => _dbContext.SaveChanges();
     }
 }
