@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Services.Interfaces;
+using Common.Models;
 using Repository.Interfaces;
 
 namespace BusinessLogic.Services
@@ -11,6 +12,8 @@ namespace BusinessLogic.Services
         {
             _repository = repository;
         }
+
+        public List<House> GetAllHouses() => _repository.GetAll().ToList();
 
         public void Create()
         {
