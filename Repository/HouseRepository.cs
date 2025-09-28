@@ -15,5 +15,26 @@ namespace Repository
         }
 
         public IQueryable<House> GetAll() => _dbContext.Houses.AsNoTracking();
+
+        public House? GetById(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Create(House house)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void Update(House house)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
