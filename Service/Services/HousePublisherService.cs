@@ -30,9 +30,72 @@ namespace BusinessLogic.Services
             throw new NotImplementedException();
         }
 
-        public List<string> Validate()
+        public List<string> Validate(House content)
         {
-            throw new NotImplementedException();
+            var errors = new List<string>();
+
+            // 驗證房屋名稱
+            if (string.IsNullOrWhiteSpace(content.HouseName))
+            {
+                errors.Add("房屋名稱為必填欄位");
+            }
+            else if (content.HouseName.Length > 200)
+            {
+                errors.Add("房屋名稱長度不能超過 200 個字元");
+            }
+
+            // 驗證地址
+            if (string.IsNullOrWhiteSpace(content.Address))
+            {
+                errors.Add("地址為必填欄位");
+            }
+            else if (content.Address.Length > 500)
+            {
+                errors.Add("地址長度不能超過 500 個字元");
+            }
+
+            // 驗證總價格
+            if (content.TotalPrice <= 0)
+            {
+                errors.Add("總價格必須大於 0");
+            }
+            else if (content.TotalPrice > 999999999999999.99m) // decimal(18,2) 的最大值
+            {
+                errors.Add("總價格超過系統限制");
+            }
+
+            // 驗證坪數
+            if (content.FloorArea <= 0)
+            {
+                errors.Add("坪數必須大於 0");
+            }
+            else if (content.FloorArea > 999999.99m) // decimal(8,2) 的最大值
+            {
+                errors.Add("坪數超過系統限制");
+            }
+
+            // 驗證描述（選填欄位）
+            if (!string.IsNullOrEmpty(content.Description) && content.Description.Length > 2000)
+            {
+                errors.Add("描述長度不能超過 2000 個字元");
+            }
+
+            // 業務邏輯驗證
+            // 驗證坪單價是否合理（可選的業務邏輯）
+            if (content.TotalPrice > 0 && content.FloorArea > 0)
+            {
+                var pricePerPing = content.TotalPrice / content.FloorArea;
+                if (pricePerPing > 5000000) // 每坪超過 500 萬可能不合理
+                {
+                    errors.Add("每坪單價過高，請檢查總價格或坪數是否正確");
+                }
+                else if (pricePerPing < 10000) // 每坪低於 1 萬可能不合理
+                {
+                    errors.Add("每坪單價過低，請檢查總價格或坪數是否正確");
+                }
+            }
+
+            return errors;
         }
     }
 }

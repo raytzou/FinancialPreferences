@@ -8,6 +8,6 @@ namespace BusinessLogic.Services.Interfaces
         void Create();
         void Update();
         void Delete();
-        List<string> Validate();
+        List<string> Validate(House content);
     }
 }
