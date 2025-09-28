@@ -22,6 +22,9 @@ namespace FinancialPreferences
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            // Add API Controllers
+            builder.Services.AddControllers();
+
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IHouseRepository, HouseRepository>();
@@ -46,9 +49,13 @@ namespace FinancialPreferences
 
             app.UseAuthorization();
 
+            // MVC Route
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            // API Route
+            app.MapControllers();
 
             app.Run();
         }
