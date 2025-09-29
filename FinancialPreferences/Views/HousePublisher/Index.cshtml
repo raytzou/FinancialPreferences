@@ -588,7 +588,7 @@
 
                 try {
                     if (currentEditingId) {
-                        // 更新 - 之後實作
+                        // 更新
                         await updateHouseViaAPI(formData);
                     } else {
                         // 新增
@@ -643,10 +643,40 @@
             return result;
         }
 
-        // 更新房屋 API 呼叫 (預留)
+        // 更新房屋 API 呼叫
         async function updateHouseViaAPI(houseData) {
-            // 之後實作更新 API
-            throw new Error('更新功能尚未實作');
+            const response = await fetch(`${API_BASE_URL}/${houseData.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(houseData)
+            });
+
+            if (!response.ok) {
+                if (response.status === 400) {
+                    // 驗證錯誤 - 顯示伺服器端驗證訊息
+                    const errorData = await response.json();
+                    showServerValidationErrors(errorData);
+                    throw new Error('驗證失敗');
+                } else if (response.status === 404) {
+                    // 房屋不存在
+                    const errorData = await response.json();
+                    showErrorModal('房屋不存在', errorData.message || '指定的房屋不存在或已被刪除');
+                    throw new Error('房屋不存在');
+                } else if (response.status === 500) {
+                    // 伺服器錯誤
+                    const errorData = await response.json();
+                    showErrorModal('伺服器錯誤', errorData.message || '更新房屋時發生內部錯誤');
+                    throw new Error(errorData.message || '伺服器內部錯誤');
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            }
+
+            const result = await response.json();
+            console.log('房屋更新成功：', result);
+            return result;
         }
 
         // 顯示伺服器端驗證錯誤
