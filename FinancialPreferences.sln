@@ -12,6 +12,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{EF88FEBD-CF80-4E95-B4F0-C3A61B0E2250}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB", "DB", "{9AC0202F-4A19-41E6-B594-C3AB60E6A98B}"
+	ProjectSection(SolutionItems) = preProject
+		DB\procedures.sql = DB\procedures.sql
+		DB\schema.sql = DB\schema.sql
+		DB\seed.sql = DB\seed.sql
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{F2A0D873-AA90-4248-A2ED-ED6058352A54}"
 EndProject
