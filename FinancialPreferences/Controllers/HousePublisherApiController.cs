@@ -24,7 +24,6 @@ namespace FinancialPreferences.Controllers
             var validationErrors = _service.Validate(request);
             if (validationErrors.Count > 0)
             {
-                // 回傳自訂的錯誤格式，不使用 ModelState
                 return BadRequest(new
                 {
                     message = "驗證失敗",
@@ -35,14 +34,38 @@ namespace FinancialPreferences.Controllers
             try
             {
                 _service.Create(request.HouseName, request.Address, request.TotalPrice, request.FloorArea, request.Description);
-
-                // 回傳 201 Created 狀態碼和新建立的資源
-                return CreatedAtAction(nameof(GetAllHouses), new { id = request.Id }, request);
+                return Ok(new { message = "房屋建立成功" });
             }
             catch (Exception ex)
             {
-                // 記錄錯誤並回傳 500 Internal Server Error
                 return StatusCode(500, new { message = "建立房屋時發生內部錯誤", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete(string id)
+        {
+            try
+            {
+                // 驗證 ID 格式
+                if (!Guid.TryParse(id, out _))
+                {
+                    return BadRequest(new
+                    {
+                        message = "無效的房屋 ID 格式"
+                    });
+                }
+
+                _service.Delete(id);
+                return Ok(new { message = "房屋刪除成功" });
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { message = "找不到指定的房屋", error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "刪除房屋時發生內部錯誤", error = ex.Message });
             }
         }
     }
