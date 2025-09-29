@@ -7,7 +7,7 @@ namespace BusinessLogic.Services.Interfaces
         List<House> GetAllHouses();
         void Create(string houseName, string address, decimal totalPrice, decimal floorArea, string description);
         void Update();
-        void Delete();
+        void Delete(string id);
         List<string> Validate(House content);
     }
 }

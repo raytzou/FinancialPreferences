@@ -32,9 +32,10 @@ namespace BusinessLogic.Services
             _repository.CommitChanges();
         }
 
-        public void Delete()
+        public void Delete(string id)
         {
-            throw new NotImplementedException();
+            _repository.Delete(Guid.Parse(id));
+            _repository.CommitChanges();
         }
 
         public void Update()
