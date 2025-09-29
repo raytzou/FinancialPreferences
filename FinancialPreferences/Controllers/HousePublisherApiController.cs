@@ -68,5 +68,34 @@ namespace FinancialPreferences.Controllers
                 return StatusCode(500, new { message = "刪除房屋時發生內部錯誤", error = ex.Message });
             }
         }
+
+        [HttpPut("{id}")]
+        public ActionResult<House> Update(string id, [FromBody] House request)
+        {
+            if (!Guid.TryParse(id, out var guidId) || request.Id != guidId)
+            {
+                return BadRequest(new { message = "ID 不一致或格式錯誤" });
+            }
+
+            var validationErrors = _service.Validate(request);
+            if (validationErrors.Count > 0)
+            {
+                return BadRequest(new
+                {
+                    message = "驗證失敗",
+                    errors = validationErrors
+                });
+            }
+
+            try
+            {
+                _service.Update(request);
+                return Ok(new { message = "房屋更新成功" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "更新房屋時發生內部錯誤", error = ex.Message });
+            }
+        }
     }
 }
