@@ -38,9 +38,10 @@ namespace BusinessLogic.Services
             _repository.CommitChanges();
         }
 
-        public void Update()
+        public void Update(House content)
         {
-            throw new NotImplementedException();
+            _repository.Update(content);
+            _repository.CommitChanges();
         }
 
         public List<string> Validate(House content)
